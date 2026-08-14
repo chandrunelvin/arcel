@@ -29,14 +29,14 @@ export default function FooterNav({ onSelect, activeKey }) {
               }
             >
               <CardContent className="mx-auto flex h-full w-full max-w-[719px] items-center justify-between gap-4 p-0 px-6">
-                <div className="flex min-w-0 flex-1 flex-col items-start gap-2 whitespace-normal">
+                <div className="flex min-w-0 flex-1 flex-col items-start gap-0.5 whitespace-normal">
                   <p
-                    className="font-sans text-[clamp(11px,0.7vw,14px)] font-normal leading-[clamp(15px,0.9vw,18px)]"
+                    className="font-sans text-[clamp(9px,0.55vw,12px)] font-normal leading-[clamp(13px,0.75vw,16px)]"
                     style={{ color: isActive ? sense.accent : "#fff" }}
                   >
                     {sense.element}
                   </p>
-                  <p className="font-heading text-[clamp(18px,0.8vw,26px)] font-medium leading-[clamp(22px,1.6vw,32px)] tracking-[-0.16px] text-white">
+                  <p className="font-heading text-[clamp(15px,0.65vw,21px)] font-medium leading-[clamp(19px,1.3vw,26px)] tracking-[-0.16px] text-white">
                     {sense.title}
                   </p>
                 </div>

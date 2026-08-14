@@ -165,16 +165,19 @@ export default function SenseDetail({ open, activeKey, onSelect, onBack, onClose
         type="button"
         onClick={() => footerRef.current?.scrollIntoView({ behavior: 'smooth', block: 'end' })}
         aria-label="Show all senses"
-        className={`sticky bottom-0 z-20 w-full items-center justify-between gap-4 border-t border-white/10 bg-arcelblack px-6 pb-5 pt-4 text-left sm:hidden ${
+        className={`sticky bottom-0 z-20 h-[100px] w-full items-center justify-between gap-4 border-t border-white/10 bg-arcelblack px-6 text-left sm:hidden ${
           footerVisible ? "hidden" : "flex"
         }`}
         style={{ boxShadow: `inset 0 -3px 0 0 ${sense.accent}` }}
       >
-        <div className="flex min-w-0 flex-1 flex-col items-start gap-2 whitespace-normal">
-          <p className="font-sans text-xs font-normal" style={{ color: sense.accent }}>
+        <div className="flex min-w-0 flex-1 flex-col items-start gap-0.5 whitespace-normal">
+          <p
+            className="font-sans text-[clamp(9px,0.55vw,12px)] font-normal leading-[clamp(13px,0.75vw,16px)]"
+            style={{ color: sense.accent }}
+          >
             {sense.element}
           </p>
-          <p className="font-heading text-lg font-medium tracking-[-0.16px] text-white">
+          <p className="font-heading text-[clamp(15px,0.65vw,21px)] font-medium leading-[clamp(19px,1.3vw,26px)] tracking-[-0.16px] text-white">
             {sense.title}
           </p>
         </div>

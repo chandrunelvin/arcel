@@ -15,7 +15,7 @@ export default function TopNav() {
           </svg>
           EN
         </button>
-        <button className="shrink-0 whitespace-nowrap rounded-md bg-arcel-blue px-4 py-2 text-sm font-semibold text-white transition-opacity hover:opacity-90 sm:px-5">
+        <button className="shrink-0 whitespace-nowrap bg-arcel-blue px-4 py-2 text-sm font-semibold text-white transition-opacity hover:opacity-90 sm:px-5">
           Sign up
         </button>
       </div>
