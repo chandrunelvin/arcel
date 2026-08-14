@@ -62,7 +62,7 @@ function App() {
         </div>
 
         {/* five senses paragraph — not present in the photo, kept as an overlay */}
-        <div className="pointer-events-none absolute right-6 top-1/2 hidden max-w-[240px] -translate-y-1/2 text-right font-roboto text-[15px] leading-[19px] text-white sm:block sm:right-14">
+        <div className="pointer-events-none absolute right-6 top-1/2 hidden max-w-[240px] -translate-y-1/2 text-right font-roboto text-xs leading-[16px] text-white sm:block sm:right-14">
           The built environment is perceived through five senses, five
           faculties, each grasping one part of the whole. ARCEL is the sixth,
           the mind that coordinates them.
@@ -73,36 +73,31 @@ function App() {
             centered mark only on sm+, with the absolute side text back */}
         <div className="relative flex flex-1 flex-col items-center justify-center gap-6 px-6 py-6 sm:min-h-0 sm:py-10">
           {/* left label — desktop/tablet only */}
-          <div className="absolute left-6 top-1/2 hidden -translate-y-24 text-left sm:block sm:left-14 md:left-24">
-            <p className="font-roboto text-sm font-normal leading-[18px] text-white">AI</p>
-            <h1 className="mt-[15px] font-heading text-4xl font-semibold leading-tight tracking-[-0.32px] text-white sm:text-5xl">
+          <div className="absolute left-6 top-1/2 hidden -translate-y-1/2 text-left sm:block sm:left-14 md:left-24">
+            <p className="font-roboto text-xs font-normal leading-[16px] text-white">AI</p>
+            <h1 className="mt-[15px] font-heading text-2xl font-semibold leading-tight tracking-[-0.32px] text-white sm:text-3xl">
               ARCEL
               <br />
               Intelligence
             </h1>
-            <p className="mt-[15px] font-roboto text-sm font-normal leading-[19px] text-white">
+            <p className="mt-[15px] font-roboto text-xs font-normal leading-[16px] text-white">
               THE SIX SENSES
             </p>
           </div>
 
-          <LogoMark
-            loop={isMobile}
-            onComplete={() =>
-              setNav((n) => (n.view === 'closed' ? { view: 'gallery', activeKey: null } : n))
-            }
-          />
+          <LogoMark loop />
 
           {/* title + description — mobile only, shown below the mark and
               above the footer nav */}
           <div className="flex max-w-xs flex-col items-center gap-3 text-center sm:hidden">
-            <p className="font-roboto text-sm font-normal text-white/70">AI</p>
-            <h1 className="font-heading text-3xl font-semibold leading-tight tracking-[-0.32px] text-white">
+            <p className="font-roboto text-xs font-normal text-white/70">AI</p>
+            <h1 className="font-heading text-xl font-semibold leading-tight tracking-[-0.32px] text-white">
               ARCEL Intelligence
             </h1>
             <p className="font-roboto text-xs font-normal uppercase tracking-[0.2em] text-white/50">
               THE SIX SENSES
             </p>
-            <p className="font-roboto text-sm leading-relaxed text-white/70">
+            <p className="font-roboto text-xs leading-relaxed text-white/70">
               The built environment is perceived through five senses, five
               faculties, each grasping one part of the whole. ARCEL is the
               sixth, the mind that coordinates them.
@@ -118,7 +113,7 @@ function App() {
       />
 
       <SenseGallery
-        open={!isMobile && nav.view === 'gallery'}
+        open={nav.view === 'gallery'}
         activeKey={nav.activeKey}
         onSelect={(key) => setNav({ view: 'detail', activeKey: key })}
         onClose={() => setNav({ view: 'closed', activeKey: null })}
@@ -128,9 +123,7 @@ function App() {
         open={nav.view === 'detail'}
         activeKey={nav.activeKey}
         onSelect={(key) => setNav({ view: 'detail', activeKey: key })}
-        onBack={() =>
-          setNav((n) => (isMobile ? { view: 'closed', activeKey: null } : { view: 'gallery', activeKey: n.activeKey }))
-        }
+        onBack={() => setNav((n) => ({ view: 'gallery', activeKey: n.activeKey }))}
         onClose={() => setNav({ view: 'closed', activeKey: null })}
       />
     </div>

@@ -66,16 +66,6 @@ export default function SenseDetail({ open, activeKey, onSelect, onBack, onClose
             <path d="M15 6l-6 6 6 6" strokeLinecap="round" strokeLinejoin="round" />
           </svg>
         </button>
-        <button
-          type="button"
-          onClick={onClose}
-          aria-label="Close"
-          className="absolute right-5 top-5 z-10 flex h-10 w-10 items-center justify-center rounded-full bg-white/10 text-white backdrop-blur transition-colors hover:bg-white/20"
-        >
-          <svg viewBox="0 0 24 24" className="h-5 w-5" fill="none" stroke="currentColor" strokeWidth="1.8">
-            <path d="M6 6l12 12M18 6L6 18" strokeLinecap="round" />
-          </svg>
-        </button>
 
         {/* per-sense photo — swap the file in src/assets/images/senses/ to update */}
         <div className="pointer-events-none absolute inset-0">
@@ -83,12 +73,12 @@ export default function SenseDetail({ open, activeKey, onSelect, onBack, onClose
             className="absolute inset-0 bg-cover bg-center"
             style={{ backgroundImage: `url(${sense.bg})` }}
           />
+          <div className="absolute inset-0" style={{ background: '#00000099' }} />
           <img
             src={heroGridOverlay}
             alt=""
             className="absolute inset-0 h-full w-full object-cover opacity-30"
           />
-          <div className="absolute inset-x-0 bottom-0 h-2/3 bg-gradient-to-t from-black to-transparent" />
         </div>
 
         {/* right description */}
@@ -106,17 +96,17 @@ export default function SenseDetail({ open, activeKey, onSelect, onBack, onClose
             text on sm+, unchanged. */}
         <div className="relative flex flex-1 flex-col items-center justify-start gap-6 px-6 pb-10 pt-20 sm:flex-row sm:justify-center sm:gap-0 sm:py-16 sm:py-24">
           {/* left label — desktop/tablet only */}
-          <div className="absolute left-6 top-1/2 hidden -translate-y-24 text-left sm:block sm:left-14 md:left-24">
-            <p className="font-roboto text-sm font-normal leading-[18px] text-white">
+          <div className="absolute left-6 top-1/2 hidden -translate-y-1/2 text-left sm:block sm:left-14 md:left-24">
+            <p className="font-roboto text-xs font-normal leading-[16px] text-white">
               {sense.element}
             </p>
             <h1
-              className="mt-[15px] font-heading text-[clamp(28px,2.6vw,48px)] font-semibold leading-tight tracking-[-0.32px]"
+              className="mt-[15px] font-heading text-[clamp(20px,1.8vw,34px)] font-semibold leading-tight tracking-[-0.32px]"
               style={{ color: sense.accent }}
             >
               {sense.title}
             </h1>
-            <p className="mt-[15px] font-roboto text-[11px] uppercase tracking-[0.2em] text-white/50">
+            <p className="mt-[15px] font-roboto text-[10px] font-normal uppercase tracking-[0.2em] text-white">
               Intelligence / {sense.element} · {sense.sense}
             </p>
           </div>
@@ -142,7 +132,7 @@ export default function SenseDetail({ open, activeKey, onSelect, onBack, onClose
           {/* title + description — mobile only, shown below the mark and
               above the footer nav */}
           <div className="flex max-w-xs flex-col items-center gap-3 text-center sm:hidden">
-            <p className="font-roboto text-[11px] uppercase tracking-[0.2em] text-white/50">
+            <p className="font-roboto text-[11px] font-normal uppercase tracking-[0.2em] text-white">
               {sense.element} · {sense.sense}
             </p>
             <h1

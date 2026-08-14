@@ -45,13 +45,14 @@ export default function LogoMark({ onComplete, loop = false }) {
         style={{ borderColor: ringColors[frame] }}
       />
 
-      <div className="relative w-[46%] drop-shadow-[0_0_25px_rgba(34,34,232,0.35)]">
-        <img
-          key={frame}
-          src={frames[frame]}
-          alt="ARCEL"
-          className="animate-spin-once w-full"
-        />
+      {/* rotation lives on this wrapper permanently, independent of the
+          frame swaps below — so it spins continuously instead of doing
+          one spin per frame and holding still in between */}
+      <div
+        className="relative w-[46%] drop-shadow-[0_0_25px_rgba(34,34,232,0.35)]"
+        style={{ animation: 'spin-slow 8s linear infinite' }}
+      >
+        <img src={frames[frame]} alt="ARCEL" className="w-full" />
       </div>
     </div>
   )

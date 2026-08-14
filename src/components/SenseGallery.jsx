@@ -19,6 +19,13 @@ export default function SenseGallery({ open, onClose, onSelect, activeKey }) {
   const [expanding, setExpanding] = useState(null) // { key, sense, rect, targetRect, active, closing }
 
   useEffect(() => {
+    // leaving the gallery (footer nav pick, close, back-to-detail, etc.) —
+    // clear any expanded photo so coming back always lands on the grid,
+    // not wherever it was left expanded.
+    if (!open) setExpanding(null)
+  }, [open])
+
+  useEffect(() => {
     if (!open) return
     const onKey = (e) => e.key === 'Escape' && onClose()
     window.addEventListener('keydown', onKey)
@@ -38,6 +45,10 @@ export default function SenseGallery({ open, onClose, onSelect, activeKey }) {
     )
     return () => cancelAnimationFrame(id)
   }, [expanding])
+
+  const handleCollapse = () => {
+    setExpanding((e) => (e ? { ...e, active: false, closing: true } : e))
+  }
 
   const handlePick = (sense) => {
     const el = btnRefs.current[sense.key]
@@ -138,6 +149,18 @@ export default function SenseGallery({ open, onClose, onSelect, activeKey }) {
           />
           <div className="absolute inset-0" style={{ background: '#00000099' }} />
 
+          <button
+            type="button"
+            onClick={handleCollapse}
+            aria-label="Back to overview"
+            className="absolute left-5 top-5 z-10 flex h-10 w-10 items-center justify-center rounded-full bg-white/10 text-white backdrop-blur transition-opacity duration-300 hover:bg-white/20"
+            style={{ opacity: expanding.active ? 1 : 0, transitionDelay: expanding.active ? '250ms' : '0ms' }}
+          >
+            <svg viewBox="0 0 24 24" className="h-5 w-5" fill="none" stroke="currentColor" strokeWidth="1.8">
+              <path d="M15 6l-6 6 6 6" strokeLinecap="round" strokeLinejoin="round" />
+            </svg>
+          </button>
+
           {/* same accent ring + spinning center mark as SenseDetail */}
           <div
             className="absolute inset-0 flex items-center justify-center transition-opacity duration-300"
@@ -167,19 +190,19 @@ export default function SenseGallery({ open, onClose, onSelect, activeKey }) {
               near the end of the grow so it reads as one continuous reveal
               instead of the text just appearing once the page swaps */}
           <div
-            className="absolute left-6 top-1/2 -translate-y-24 text-left transition-opacity duration-300 sm:left-14 md:left-24"
+            className="absolute left-6 top-1/2 -translate-y-1/2 text-left transition-opacity duration-300 sm:left-14 md:left-24"
             style={{ opacity: expanding.active ? 1 : 0, transitionDelay: expanding.active ? '250ms' : '0ms' }}
           >
-            <p className="font-roboto text-sm font-normal leading-[18px] text-white">
+            <p className="font-roboto text-xs font-normal leading-[16px] text-white">
               {expanding.sense.element}
             </p>
             <h1
-              className="mt-[15px] font-heading text-[clamp(28px,2.6vw,48px)] font-semibold leading-tight tracking-[-0.32px]"
+              className="mt-[15px] font-heading text-[clamp(20px,1.8vw,34px)] font-semibold leading-tight tracking-[-0.32px]"
               style={{ color: expanding.sense.accent }}
             >
               {expanding.sense.title}
             </h1>
-            <p className="mt-[15px] font-roboto text-[11px] uppercase tracking-[0.2em] text-white/50">
+            <p className="mt-[15px] font-roboto text-[10px] font-normal uppercase tracking-[0.2em] text-white">
               Intelligence / {expanding.sense.element} · {expanding.sense.sense}
             </p>
           </div>

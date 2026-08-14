@@ -1,0 +1,8 @@
+{
+  "permissions": {
+    "allow": [
+      "Bash(rm -f /private/tmp/claude-501/-Users-furniconcepts-Documents-arcel/6d03ac42-e588-4d82-abd3-452d4ab625c5/scratchpad/smaller.png)",
+      "Bash(npx --yes playwright screenshot --viewport-size=1400,220 --wait-for-timeout=800 \"http://localhost:5173\" /private/tmp/claude-501/-Users-furniconcepts-Documents-arcel/6d03ac42-e588-4d82-abd3-452d4ab625c5/scratchpad/smaller.png)"
+    ]
+  }
+}
