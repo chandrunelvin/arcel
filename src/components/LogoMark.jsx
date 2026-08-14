@@ -29,7 +29,7 @@ export default function LogoMark({ onComplete }) {
   }, [frame, onComplete])
 
   return (
-    <div className="relative flex h-[280px] w-[280px] items-center justify-center sm:h-[380px] sm:w-[380px]">
+    <div className="relative flex h-[clamp(180px,34vh,280px)] w-[clamp(180px,34vh,280px)] items-center justify-center sm:h-[clamp(220px,38vh,380px)] sm:w-[clamp(220px,38vh,380px)]">
       {/* outer blue ring */}
       <div className="absolute inset-0 rounded-full border border-[#191bdf]" />
       {/* inner ring — recolored per frame */}

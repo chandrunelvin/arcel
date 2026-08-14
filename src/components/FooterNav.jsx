@@ -5,19 +5,17 @@ import { senses } from "../data/senses";
 export default function FooterNav({ onSelect, activeKey }) {
   return (
     <footer
-      className="grid grid-cols-2 sm:grid-cols-5"
+      className="grid grid-cols-1 sm:grid-cols-5"
       aria-label="The six senses"
     >
-      {senses.map((sense, i) => {
+      {senses.map((sense) => {
         const isActive = sense.key === activeKey;
         return (
           <Button
             key={sense.key}
             type="button"
             variant="ghost"
-            className={`h-[clamp(100px,7.5vw,150px)] w-full rounded-none p-0 text-left hover:bg-transparent ${
-              i === senses.length - 1 ? "col-span-2 sm:col-span-1" : ""
-            }`}
+            className="h-[clamp(72px,6.5vh,150px)] w-full rounded-none p-0 text-left hover:bg-transparent sm:h-[clamp(90px,7.5vw,150px)]"
             onClick={() => onSelect?.(sense.key)}
           >
             <Card

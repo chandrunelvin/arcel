@@ -22,7 +22,7 @@ function App() {
       </div>
 
       {/* hero */}
-      <main className="relative flex flex-1 flex-col overflow-hidden bg-[#050505]">
+      <main className="relative flex min-h-0 flex-1 flex-col overflow-hidden bg-[#050505]">
         {/* real hero photo: Dubai skyline + architectural wireframe overlay
             (already carries the "Digital Twin", "Smart City OS" and
             "Architecture Intelligence" callouts baked into the image) */}
@@ -48,7 +48,7 @@ function App() {
         </div>
 
         {/* center content */}
-        <div className="relative flex flex-1 items-center justify-center px-6 py-16 sm:py-24">
+        <div className="relative flex min-h-0 flex-1 items-center justify-center px-6 py-6 sm:py-10">
           {/* left label */}
           <div className="absolute left-6 top-1/2 hidden -translate-y-24 text-left sm:block sm:left-14 md:left-24">
             <p className="font-roboto text-sm font-normal leading-[18px] text-white">AI</p>
