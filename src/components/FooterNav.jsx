@@ -15,7 +15,7 @@ export default function FooterNav({ onSelect, activeKey }) {
             key={sense.key}
             type="button"
             variant="ghost"
-            className={`h-[clamp(72px,6.5vh,150px)] w-full rounded-none p-0 text-left hover:bg-transparent sm:h-[clamp(90px,7.5vw,150px)] ${
+            className={`h-[100px] w-full rounded-none p-0 text-left hover:bg-transparent ${
               isActive ? "order-first sm:order-none" : ""
             }`}
             onClick={() => onSelect?.(sense.key)}

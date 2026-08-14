@@ -83,7 +83,6 @@ export default function SenseDetail({ open, activeKey, onSelect, onBack, onClose
             className="absolute inset-0 bg-cover bg-center"
             style={{ backgroundImage: `url(${sense.bg})` }}
           />
-          <div className="absolute inset-0" style={{ background: '#00000099' }} />
           <img
             src={heroGridOverlay}
             alt=""
