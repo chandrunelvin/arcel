@@ -13,20 +13,27 @@ const ringColors = ['#4E4E4E', '#FFC639', '#895EF6', '#F90D21', '#20CBDD', '#7AE
 // full 1s spin as it's revealed then holding for a beat, framed by the two
 // concentric rings from the source design, then hands off via onComplete
 // once the sequence has played through.
-export default function LogoMark({ onComplete }) {
+// `loop`: on mobile the sense gallery is skipped, so instead of handing off
+// via onComplete after the last frame, the sequence just restarts and keeps
+// spinning on the home screen.
+export default function LogoMark({ onComplete, loop = false }) {
   const [frame, setFrame] = useState(0)
 
   useEffect(() => {
     const isLastFrame = frame === frames.length - 1
     const timer = setTimeout(() => {
       if (isLastFrame) {
-        onComplete?.()
+        if (loop) {
+          setFrame(0)
+        } else {
+          onComplete?.()
+        }
       } else {
         setFrame((f) => f + 1)
       }
     }, 2200)
     return () => clearTimeout(timer)
-  }, [frame, onComplete])
+  }, [frame, onComplete, loop])
 
   return (
     <div className="relative flex h-[clamp(180px,34vh,280px)] w-[clamp(180px,34vh,280px)] items-center justify-center sm:h-[clamp(220px,38vh,380px)] sm:w-[clamp(220px,38vh,380px)]">

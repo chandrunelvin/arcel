@@ -76,6 +76,20 @@ body,
   }
 }
 
+/* Desktop-only variant: the ticker strip carries `sm:px-10` (80px total)
+   side padding, but `100vw` ignores that padding and starts the image a
+   full extra 80px past the strip's actual right edge — ~1.6s of "dead"
+   travel before it's visible. Starting from `100vw - 80px` lines the start
+   up with the padded container's edge instead, so it appears right away. */
+@keyframes marquee-once-desktop {
+  from {
+    transform: translateX(calc(100vw - 80px));
+  }
+  to {
+    transform: translateX(-100%);
+  }
+}
+
 /* Keyframe travels 100vw + the element's own width, so a fixed duration
    would make the ticker visibly race on wide screens vs. narrow ones.
    Duration is computed per breakpoint (matching the h-6/h-8 image size)
@@ -91,7 +105,11 @@ body,
 
 @media (min-width: 640px) {
   .animate-marquee-once {
-    animation-duration: calc((100vw + 422px) / 1px * 0.020261s);
+    animation-name: marquee-once-desktop;
+    /* travel is 80px shorter than the mobile keyframe (see above), so the
+       constant subtracted here is 422px - 80px = 342px to hold the same
+       ~49.36px/s speed */
+    animation-duration: calc((100vw + 342px) / 1px * 0.020261s);
   }
 }
 

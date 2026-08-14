@@ -1,4 +1,4 @@
-import { useEffect } from 'react'
+import { useEffect, useRef, useState } from 'react'
 import { senses } from '../data/senses'
 import FooterNav from './FooterNav'
 import TopNav from './TopNav'
@@ -10,6 +10,10 @@ import heroGridOverlay from '../assets/hero-grid-overlay.svg'
 // left heading / right description) but re-themed per sense, with the
 // footer nav's active tab underlined in that sense's accent color.
 export default function SenseDetail({ open, activeKey, onSelect, onBack, onClose }) {
+  const scrollRef = useRef(null)
+  const footerRef = useRef(null)
+  const [footerVisible, setFooterVisible] = useState(false)
+
   useEffect(() => {
     if (!open) return
     const onKey = (e) => e.key === 'Escape' && onClose()
@@ -21,18 +25,36 @@ export default function SenseDetail({ open, activeKey, onSelect, onBack, onClose
     }
   }, [open, onClose])
 
+  // Hides the mobile peek bar once the real footer nav has scrolled into
+  // view, so the active sense isn't shown twice at once.
+  useEffect(() => {
+    if (!open) return
+    const node = footerRef.current
+    const root = scrollRef.current
+    if (!node || !root) return
+    const observer = new IntersectionObserver(([entry]) => setFooterVisible(entry.isIntersecting), {
+      root,
+      threshold: 0,
+    })
+    observer.observe(node)
+    return () => observer.disconnect()
+  }, [open, activeKey])
+
   if (!open) return null
 
   const sense = senses.find((s) => s.key === activeKey) ?? senses[0]
 
   return (
-    <div className="animate-overlay-fade fixed inset-0 z-50 flex flex-col bg-black">
+    <div ref={scrollRef} className="animate-overlay-fade fixed inset-0 z-50 flex flex-col overflow-y-auto bg-black">
       <TopNav />
       <div className="flex items-center px-6 py-3 sm:px-10" style={{ background: '#191BDF' }}>
         <Marquee />
       </div>
 
-      <main key={sense.key} className="animate-panel-in relative flex flex-1 flex-col overflow-hidden">
+      {/* on mobile this is forced to fill at least the full viewport height,
+          so the footer nav sits below the fold and only appears once the
+          page is scrolled — on sm+ it just fits the available space like before */}
+      <main key={sense.key} className="animate-panel-in relative flex min-h-[100svh] flex-1 flex-col sm:min-h-0">
         {/* back to gallery / close to home */}
         <button
           type="button"
@@ -75,9 +97,16 @@ export default function SenseDetail({ open, activeKey, onSelect, onBack, onClose
           {sense.description}
         </div>
 
-        {/* center content */}
-        <div className="relative flex flex-1 items-center justify-center px-6 py-16 sm:py-24">
-          {/* left label */}
+        {/* center content — stacked (ring, then title/description) on
+            mobile since there's no room for the absolute side text there;
+            anchored near the top (not vertically centered) so the extra
+            height from `min-h-[100svh]` above doesn't read as a big empty
+            gap above AND below the content — it collects below, right
+            before the peek bar, which is where it's expected to be.
+            Side-by-side + vertically centered with the absolute left/right
+            text on sm+, unchanged. */}
+        <div className="relative flex flex-1 flex-col items-center justify-start gap-6 px-6 pb-10 pt-20 sm:flex-row sm:justify-center sm:gap-0 sm:py-16 sm:py-24">
+          {/* left label — desktop/tablet only */}
           <div className="absolute left-6 top-1/2 hidden -translate-y-24 text-left sm:block sm:left-14 md:left-24">
             <p className="font-roboto text-sm font-normal leading-[18px] text-white">
               {sense.element}
@@ -94,7 +123,7 @@ export default function SenseDetail({ open, activeKey, onSelect, onBack, onClose
           </div>
 
           {/* accent ring + recolored mark */}
-          <div className="relative flex h-[280px] w-[280px] items-center justify-center sm:h-[380px] sm:w-[380px]">
+          <div className="relative flex h-[220px] w-[220px] shrink-0 items-center justify-center sm:h-[380px] sm:w-[380px]">
             <div
               key={sense.key}
               className="animate-spin-once absolute inset-0 rounded-full border"
@@ -110,10 +139,51 @@ export default function SenseDetail({ open, activeKey, onSelect, onBack, onClose
               {sense.element}
             </p>
           </div>
+
+          {/* title + description — mobile only, shown below the mark and
+              above the footer nav */}
+          <div className="flex max-w-xs flex-col items-center gap-3 text-center sm:hidden">
+            <p className="font-roboto text-[11px] uppercase tracking-[0.2em] text-white/50">
+              {sense.element} · {sense.sense}
+            </p>
+            <h1
+              className="font-heading text-2xl font-semibold leading-tight tracking-[-0.32px]"
+              style={{ color: sense.accent }}
+            >
+              {sense.title}
+            </h1>
+            <p className="font-roboto text-sm leading-relaxed text-white/70">
+              {sense.description}
+            </p>
+          </div>
         </div>
       </main>
 
-      <FooterNav activeKey={sense.key} onSelect={onSelect} />
+      {/* mobile-only peek bar: shows just the active sense, pinned to the
+          bottom of the screen, until the full footer scrolls into view */}
+      <button
+        type="button"
+        onClick={() => footerRef.current?.scrollIntoView({ behavior: 'smooth', block: 'end' })}
+        aria-label="Show all senses"
+        className={`sticky bottom-0 z-20 w-full items-center justify-between gap-4 border-t border-white/10 bg-arcelblack px-6 pb-5 pt-4 text-left sm:hidden ${
+          footerVisible ? "hidden" : "flex"
+        }`}
+        style={{ boxShadow: `inset 0 -3px 0 0 ${sense.accent}` }}
+      >
+        <div className="flex min-w-0 flex-1 flex-col items-start gap-2 whitespace-normal">
+          <p className="font-sans text-xs font-normal" style={{ color: sense.accent }}>
+            {sense.element}
+          </p>
+          <p className="font-heading text-lg font-medium tracking-[-0.16px] text-white">
+            {sense.title}
+          </p>
+        </div>
+        <img src={sense.icon} alt="" className="h-7 w-7 shrink-0 object-contain" />
+      </button>
+
+      <div ref={footerRef}>
+        <FooterNav activeKey={sense.key} onSelect={onSelect} />
+      </div>
     </div>
   )
 }
