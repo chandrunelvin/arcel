@@ -76,8 +76,23 @@ body,
   }
 }
 
+/* Keyframe travels 100vw + the element's own width, so a fixed duration
+   would make the ticker visibly race on wide screens vs. narrow ones.
+   Duration is computed per breakpoint (matching the h-6/h-8 image size)
+   to hold a constant ~49.36px/s — the speed the original 14s felt right
+   at on a ~375px phone — so mobile, laptop, and desktop all move the
+   same speed. */
 .animate-marquee-once {
-  animation: marquee-once 14s linear infinite;
+  animation-name: marquee-once;
+  animation-timing-function: linear;
+  animation-iteration-count: infinite;
+  animation-duration: calc((100vw + 316px) / 1px * 0.020261s);
+}
+
+@media (min-width: 640px) {
+  .animate-marquee-once {
+    animation-duration: calc((100vw + 422px) / 1px * 0.020261s);
+  }
 }
 
 /* Slow rotation for the radar ring around the logo mark */
