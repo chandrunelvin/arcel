@@ -189,7 +189,7 @@ export default function SignUpForm({ open, onClose }) {
 
   return (
     <div
-      className="animate-overlay-fade fixed inset-0 z-[100] flex items-center justify-center overflow-y-auto bg-black/80 p-4 py-10 backdrop-blur-sm"
+      className="animate-overlay-fade fixed inset-0 z-[100] flex items-start justify-center overflow-y-auto bg-black/80 p-4 py-10 backdrop-blur-sm sm:items-center"
       onClick={(e) => e.target === e.currentTarget && onClose?.()}
     >
       <div className="relative w-full max-w-2xl border border-white/10 bg-[#0a0a0a] p-6 sm:p-12">
