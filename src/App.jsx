@@ -168,8 +168,18 @@ function App() {
           <div className="relative flex h-[clamp(180px,34vh,280px)] w-[clamp(180px,34vh,280px)] items-center justify-center sm:h-[clamp(120px,38vh,380px)] sm:w-[clamp(120px,38vh,380px)]">
             {/* fully-lit FlywheelMark on both mobile and desktop, including
                 through the finale beat — the gallery's lockup icons only
-                show on the dedicated page that follows, not in the hero */}
-            <div className="relative h-[78%] w-[78%]">
+                show on the dedicated page that follows, not in the hero.
+                The hero stays mounted under the incoming overlay, so this
+                eases down in size + fades as that overlay covers it —
+                a smooth shrink instead of an abrupt cut. */}
+            <div
+              className="relative h-[78%] w-[78%] transition-all duration-700 ease-[cubic-bezier(0.4,0,0.2,1)]"
+              style={
+                nav.view !== 'closed'
+                  ? { transform: 'scale(0.55)', opacity: 0 }
+                  : { transform: 'scale(1)', opacity: 1 }
+              }
+            >
               <FlywheelMark beatIndex={nav.view === 'closed' ? beatIndex : BEATS - 1} />
             </div>
           </div>
