@@ -57,8 +57,10 @@ function App() {
   // advance one wedge at a time, in sync with the flywheel's own timing,
   // for as long as we're sitting on the home view. The -1 -> 0 kickoff is
   // its own (near-immediate) step so React commits the empty mark first.
+  // Stops once the finale beat is reached — nothing past BEATS matters, so
+  // no need to keep scheduling timeouts forever on mobile (see below).
   useEffect(() => {
-    if (nav.view !== 'closed') return
+    if (nav.view !== 'closed' || beatIndex >= BEATS) return
     if (beatIndex === -1) {
       const id = requestAnimationFrame(() => setBeatIndex(0))
       return () => cancelAnimationFrame(id)
@@ -67,10 +69,13 @@ function App() {
     return () => clearTimeout(id)
   }, [beatIndex, nav.view])
 
-  // once the flywheel completes a full 6-wedge cycle, open the gallery —
-  // on mobile too, so the "ARCEL Intelligence" lockup shows there as well,
-  // instead of skipping straight to the Development detail page. Manual
-  // footer taps below still take mobile straight to the detail page.
+  // once the flywheel completes a full 6-wedge cycle (all of 0-5 have had
+  // their turn), move to the gallery page — on mobile too, so the "ARCEL
+  // Intelligence" lockup shows there as a smooth page transition (the
+  // overlay's own fade-in) rather than just swapping in place on the home
+  // view. Mobile gets the gallery shell with its tile grid hidden — see
+  // SenseGallery's `hideTiles` prop. Manual footer taps still take mobile
+  // straight to a sense's detail page, unaffected.
   useEffect(() => {
     if (beatIndex < BEATS) return
     setNav({ view: 'gallery', activeKey: senses[0].key })
@@ -161,6 +166,9 @@ function App() {
           </div>
 
           <div className="relative flex h-[clamp(180px,34vh,280px)] w-[clamp(180px,34vh,280px)] items-center justify-center sm:h-[clamp(120px,38vh,380px)] sm:w-[clamp(120px,38vh,380px)]">
+            {/* fully-lit FlywheelMark on both mobile and desktop, including
+                through the finale beat — the gallery's lockup icons only
+                show on the dedicated page that follows, not in the hero */}
             <div className="relative h-[78%] w-[78%]">
               <FlywheelMark beatIndex={nav.view === 'closed' ? beatIndex : BEATS - 1} />
             </div>
@@ -206,6 +214,7 @@ function App() {
 
       <SenseGallery
         open={nav.view === 'gallery'}
+        hideTiles={isMobile}
         onSelect={(key) => setNav({ view: 'detail', activeKey: key })}
         onClose={() => setNav({ view: 'closed', activeKey: null })}
       />

@@ -20,7 +20,12 @@ function SenseSubtitle({ element, sense, accent, className = '' }) {
 // that sense's own background photo (senses.js `bg`) and its own center
 // artwork, tinted with that sense's accent. The real FooterNav menu sits
 // below the grid once, shared by every column.
-export default function SenseGallery({ open, onClose, onSelect }) {
+//
+// `hideTiles` (mobile): same overlay shell and smooth fade-in, same
+// centered "arcel Intelligence" lockup, but without the sense tile grid —
+// mobile doesn't get a browsable gallery, just this page as the auto-
+// rotation's landing point.
+export default function SenseGallery({ open, onClose, onSelect, hideTiles = false }) {
   const btnRefs = useRef({})
   const gridRef = useRef(null)
   // FLIP-style transition: the clicked column's own photo grows from its
@@ -92,38 +97,39 @@ export default function SenseGallery({ open, onClose, onSelect }) {
 
       <div
         ref={gridRef}
-        className={`relative grid flex-1 grid-cols-2 sm:grid-cols-5 ${expanding ? 'pointer-events-none' : ''}`}
+        className={`relative grid flex-1 ${hideTiles ? 'grid-cols-1 bg-black' : 'grid-cols-2 sm:grid-cols-5'} ${expanding ? 'pointer-events-none' : ''}`}
       >
-        {senses.map((sense, i) => {
-          return (
-            <button
-              key={sense.key}
-              ref={(el) => (btnRefs.current[sense.key] = el)}
-              type="button"
-              onClick={() => handlePick(sense)}
-              className={`animate-panel-in relative flex flex-col overflow-hidden border-r border-white/10 text-left last:border-r-0 transition-opacity duration-200 ${
-                expanding?.key === sense.key
-                  ? 'invisible'
-                  : expanding
-                    ? 'opacity-0'
-                    : ''
-              }`}
-              style={{ animationDelay: `${i * 80}ms` }}
-            >
-              {/* per-sense photo — swap the file in src/assets/images/senses/ to update */}
-              <div className="relative flex-1 overflow-hidden">
-                <div
-                  className="absolute inset-0 bg-cover bg-center"
-                  style={{ backgroundImage: `url(${sense.bg})` }}
-                />
-                <div
-                  className="absolute inset-0"
-                  style={{ background: '#00000099' }}
-                />
-              </div>
-            </button>
-          )
-        })}
+        {!hideTiles &&
+          senses.map((sense, i) => {
+            return (
+              <button
+                key={sense.key}
+                ref={(el) => (btnRefs.current[sense.key] = el)}
+                type="button"
+                onClick={() => handlePick(sense)}
+                className={`animate-panel-in relative flex flex-col overflow-hidden border-r border-white/10 text-left last:border-r-0 transition-opacity duration-200 ${
+                  expanding?.key === sense.key
+                    ? 'invisible'
+                    : expanding
+                      ? 'opacity-0'
+                      : ''
+                }`}
+                style={{ animationDelay: `${i * 80}ms` }}
+              >
+                {/* per-sense photo — swap the file in src/assets/images/senses/ to update */}
+                <div className="relative flex-1 overflow-hidden">
+                  <div
+                    className="absolute inset-0 bg-cover bg-center"
+                    style={{ backgroundImage: `url(${sense.bg})` }}
+                  />
+                  <div
+                    className="absolute inset-0"
+                    style={{ background: '#00000099' }}
+                  />
+                </div>
+              </button>
+            )
+          })}
 
         {/* single centered "arcel Intelligence" lockup over the whole grid
             — wordmark and mark side by side as one image, only the mark
