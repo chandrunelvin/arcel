@@ -6,7 +6,7 @@
 export default function Marquee({ text = 'LAUNCHING 15 OCTOBER' }) {
   return (
     <div className="relative flex w-full overflow-hidden">
-      <span className="dot-matrix-text animate-marquee-once shrink-0 whitespace-nowrap font-mono text-3xl font-thin uppercase tracking-normal sm:text-4xl">
+      <span className="dot-matrix-text animate-marquee-once shrink-0 whitespace-nowrap font-mono text-2xl font-thin uppercase tracking-normal sm:text-3xl">
         {text}
       </span>
     </div>

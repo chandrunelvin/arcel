@@ -5,7 +5,7 @@ import { senses } from "../data/senses";
 export default function FooterNav({ onSelect, activeKey }) {
   return (
     <footer
-      className="grid grid-cols-1 sm:grid-cols-5"
+      className="grid grid-cols-5"
       aria-label="The six senses"
     >
       {senses.map((sense) => {
@@ -15,9 +15,7 @@ export default function FooterNav({ onSelect, activeKey }) {
             key={sense.key}
             type="button"
             variant="ghost"
-            className={`h-[75px] w-full rounded-none p-0 text-left hover:bg-transparent ${
-              isActive ? "order-first sm:order-none" : ""
-            }`}
+            className="h-[75px] w-full rounded-none p-0 text-left hover:bg-transparent"
             onClick={() => onSelect?.(sense.key)}
           >
             <Card
@@ -28,8 +26,8 @@ export default function FooterNav({ onSelect, activeKey }) {
                   : undefined
               }
             >
-              <CardContent className="mx-auto flex h-full w-full max-w-[719px] items-center justify-between gap-4 p-0 px-6">
-                <div className="flex min-w-0 flex-1 flex-col items-start gap-0.5 whitespace-normal">
+              <CardContent className="mx-auto flex h-full w-full max-w-[719px] items-center justify-center gap-4 p-0 px-6 sm:justify-between">
+                <div className="hidden min-w-0 flex-1 flex-col items-start gap-0.5 whitespace-normal sm:flex">
                   <p
                     className="font-sans text-[clamp(9px,0.55vw,12px)] font-normal leading-[clamp(13px,0.75vw,16px)]"
                     style={{ color: isActive ? sense.accent : "#fff" }}
@@ -41,7 +39,7 @@ export default function FooterNav({ onSelect, activeKey }) {
                   </p>
                 </div>
                 <div
-                  className="flex h-[clamp(28px,2.2vw,58px)] w-[clamp(28px,2.2vw,58px)] shrink-0 items-center justify-center"
+                  className="flex h-8 w-8 shrink-0 items-center justify-center sm:h-[clamp(28px,2.2vw,58px)] sm:w-[clamp(28px,2.2vw,58px)]"
                 >
                   <img
                     className="h-full w-full object-contain"

@@ -32,7 +32,7 @@ function App() {
   const isMobile = useIsMobile()
 
   return (
-    <div className="flex min-h-screen flex-col bg-black">
+    <div className="flex min-h-screen flex-col bg-black sm:h-screen sm:overflow-hidden">
       <TopNav />
 
       {/* blue ticker strip */}

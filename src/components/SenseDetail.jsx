@@ -1,4 +1,4 @@
-import { useEffect, useRef, useState } from 'react'
+import { useEffect, useRef } from 'react'
 import { senses } from '../data/senses'
 import FooterNav from './FooterNav'
 import TopNav from './TopNav'
@@ -11,8 +11,6 @@ import heroGridOverlay from '../assets/hero-grid-overlay.svg'
 // footer nav's active tab underlined in that sense's accent color.
 export default function SenseDetail({ open, activeKey, onSelect, onBack, onClose }) {
   const scrollRef = useRef(null)
-  const footerRef = useRef(null)
-  const [footerVisible, setFooterVisible] = useState(false)
 
   useEffect(() => {
     if (!open) return
@@ -25,21 +23,6 @@ export default function SenseDetail({ open, activeKey, onSelect, onBack, onClose
     }
   }, [open, onClose])
 
-  // Hides the mobile peek bar once the real footer nav has scrolled into
-  // view, so the active sense isn't shown twice at once.
-  useEffect(() => {
-    if (!open) return
-    const node = footerRef.current
-    const root = scrollRef.current
-    if (!node || !root) return
-    const observer = new IntersectionObserver(([entry]) => setFooterVisible(entry.isIntersecting), {
-      root,
-      threshold: 0,
-    })
-    observer.observe(node)
-    return () => observer.disconnect()
-  }, [open, activeKey])
-
   if (!open) return null
 
   const sense = senses.find((s) => s.key === activeKey) ?? senses[0]
@@ -51,16 +34,13 @@ export default function SenseDetail({ open, activeKey, onSelect, onBack, onClose
         <Marquee />
       </div>
 
-      {/* on mobile this is forced to fill at least the full viewport height,
-          so the footer nav sits below the fold and only appears once the
-          page is scrolled — on sm+ it just fits the available space like before */}
-      <main key={sense.key} className="animate-panel-in relative flex min-h-[100svh] flex-1 flex-col sm:min-h-0">
+      <main key={sense.key} className="animate-panel-in relative flex flex-1 flex-col sm:min-h-0">
         {/* back to gallery / close to home */}
         <button
           type="button"
           onClick={onBack}
           aria-label="Back to overview"
-          className="absolute left-5 top-5 z-10 flex h-10 w-10 items-center justify-center rounded-full bg-white/10 text-white backdrop-blur transition-colors hover:bg-white/20"
+          className="absolute left-5 top-5 z-10 hidden h-10 w-10 items-center justify-center rounded-full bg-white/10 text-white backdrop-blur transition-colors hover:bg-white/20 sm:flex"
         >
           <svg viewBox="0 0 24 24" className="h-5 w-5" fill="none" stroke="currentColor" strokeWidth="1.8">
             <path d="M15 6l-6 6 6 6" strokeLinecap="round" strokeLinejoin="round" />
@@ -148,32 +128,9 @@ export default function SenseDetail({ open, activeKey, onSelect, onBack, onClose
         </div>
       </main>
 
-      {/* mobile-only peek bar: shows just the active sense, pinned to the
-          bottom of the screen, until the full footer scrolls into view */}
-      <button
-        type="button"
-        onClick={() => footerRef.current?.scrollIntoView({ behavior: 'smooth', block: 'end' })}
-        aria-label="Show all senses"
-        className={`sticky bottom-0 z-20 h-[100px] w-full items-center justify-between gap-4 border-t border-white/10 bg-arcelblack px-6 text-left sm:hidden ${
-          footerVisible ? "hidden" : "flex"
-        }`}
-        style={{ boxShadow: `inset 0 -3px 0 0 ${sense.accent}` }}
-      >
-        <div className="flex min-w-0 flex-1 flex-col items-start gap-0.5 whitespace-normal">
-          <p
-            className="font-sans text-[clamp(9px,0.55vw,12px)] font-normal leading-[clamp(13px,0.75vw,16px)]"
-            style={{ color: sense.accent }}
-          >
-            {sense.element}
-          </p>
-          <p className="font-heading text-[clamp(15px,0.65vw,21px)] font-medium leading-[clamp(19px,1.3vw,26px)] tracking-[-0.16px] text-white">
-            {sense.title}
-          </p>
-        </div>
-        <img src={sense.icon} alt="" className="h-7 w-7 shrink-0 object-contain" />
-      </button>
-
-      <div ref={footerRef}>
+      {/* sticky at the bottom on mobile so it's always visible without
+          scrolling; sits in normal flow on sm+ like before */}
+      <div className="sticky bottom-0 z-20 sm:static">
         <FooterNav activeKey={sense.key} onSelect={onSelect} />
       </div>
     </div>

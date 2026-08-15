@@ -1,6 +1,10 @@
+import { useState } from 'react'
 import logo from '../assets/logo.png'
+import SignUpForm from './SignUpForm'
 
 export default function TopNav() {
+  const [signUpOpen, setSignUpOpen] = useState(false)
+
   return (
     <header className="flex items-center justify-between gap-3 bg-white px-4 py-3 sm:px-10 sm:py-4">
       <div className="flex min-w-0 shrink items-center gap-3">
@@ -15,10 +19,16 @@ export default function TopNav() {
           </svg>
           EN
         </button>
-        <button className="shrink-0 whitespace-nowrap bg-arcel-blue px-4 py-2 text-sm font-semibold text-white transition-opacity hover:opacity-90 sm:px-5">
+        <button
+          type="button"
+          onClick={() => setSignUpOpen(true)}
+          className="shrink-0 whitespace-nowrap bg-arcel-blue px-4 py-2 text-sm font-semibold text-white transition-opacity hover:opacity-90 sm:px-5"
+        >
           Sign up
         </button>
       </div>
+
+      <SignUpForm open={signUpOpen} onClose={() => setSignUpOpen(false)} />
     </header>
   )
 }
