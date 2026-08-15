@@ -6,6 +6,22 @@ const countries = [
   'United Kingdom', 'United States', 'India', 'Singapore', 'Egypt', 'Other',
 ]
 
+// flag + ISO-3166 alpha-3 code + dial code, for the phone field's country
+// code selector.
+const phoneCodes = [
+  { flag: '🇦🇪', code: 'ARE', dial: '+971' },
+  { flag: '🇸🇦', code: 'SAU', dial: '+966' },
+  { flag: '🇶🇦', code: 'QAT', dial: '+974' },
+  { flag: '🇰🇼', code: 'KWT', dial: '+965' },
+  { flag: '🇧🇭', code: 'BHR', dial: '+973' },
+  { flag: '🇴🇲', code: 'OMN', dial: '+968' },
+  { flag: '🇬🇧', code: 'GBR', dial: '+44' },
+  { flag: '🇺🇸', code: 'USA', dial: '+1' },
+  { flag: '🇮🇳', code: 'IND', dial: '+91' },
+  { flag: '🇸🇬', code: 'SGP', dial: '+65' },
+  { flag: '🇪🇬', code: 'EGY', dial: '+20' },
+]
+
 function Field({ label, children }) {
   return (
     <div className="flex flex-col gap-2">
@@ -20,11 +36,11 @@ function Field({ label, children }) {
 const inputClass =
   'w-full border border-white/15 bg-white/[0.03] px-4 py-3 font-roboto text-sm text-white placeholder:text-white/30 outline-none focus:border-arcel-blue'
 
-function Select({ children, ...props }) {
+function Select({ children, className = '', ...props }) {
   return (
     <div className="relative">
       <select
-        className={`${inputClass} appearance-none pr-10`}
+        className={`${inputClass} appearance-none pr-10 ${className}`}
         defaultValue=""
         {...props}
       >
@@ -44,8 +60,8 @@ function Select({ children, ...props }) {
 }
 
 // "Sign up" popup — a registration form for launch access, opened from
-// TopNav's Sign up button. Self-contained (no submit wiring yet — this is
-// just the form UI matching the design).
+// TopNav's Sign up button. A centered modal card, not a full-screen page.
+// Self-contained (no submit wiring yet — this is just the form UI).
 export default function SignUpForm({ open, onClose }) {
   useEffect(() => {
     if (!open) return
@@ -61,13 +77,16 @@ export default function SignUpForm({ open, onClose }) {
   if (!open) return null
 
   return (
-    <div className="animate-overlay-fade fixed inset-0 z-[100] overflow-y-auto bg-black">
-      <div className="relative mx-auto max-w-3xl px-6 py-10 sm:px-0 sm:py-16">
+    <div
+      className="animate-overlay-fade fixed inset-0 z-[100] flex items-center justify-center overflow-y-auto bg-black/80 p-4 py-10 backdrop-blur-sm"
+      onClick={(e) => e.target === e.currentTarget && onClose?.()}
+    >
+      <div className="relative w-full max-w-2xl border border-white/10 bg-[#0a0a0a] p-6 sm:p-12">
         <button
           type="button"
           onClick={onClose}
           aria-label="Close"
-          className="absolute right-6 top-10 flex h-10 w-10 items-center justify-center border border-arcel-blue text-white transition-colors hover:bg-arcel-blue/20 sm:right-0"
+          className="absolute right-5 top-5 flex h-9 w-9 items-center justify-center border border-arcel-blue text-white transition-colors hover:bg-arcel-blue/20 sm:right-8 sm:top-8"
         >
           <svg viewBox="0 0 24 24" className="h-4 w-4" fill="none" stroke="currentColor" strokeWidth="1.8">
             <path d="M6 6l12 12M18 6L6 18" strokeLinecap="round" />
@@ -77,7 +96,7 @@ export default function SignUpForm({ open, onClose }) {
         <p className="font-roboto text-xs font-semibold uppercase tracking-[0.15em] text-arcel-blue">
           Arcel Konnect
         </p>
-        <h1 className="mt-3 font-heading text-4xl font-bold leading-tight tracking-[-0.02em] text-white sm:text-6xl">
+        <h1 className="mt-3 font-heading text-3xl font-bold leading-tight tracking-[-0.02em] text-white sm:text-5xl">
           Enter the ecosystem.
         </h1>
         <p className="mt-4 font-roboto text-base text-white/60">
@@ -85,7 +104,7 @@ export default function SignUpForm({ open, onClose }) {
         </p>
 
         <form
-          className="mt-10 grid grid-cols-1 gap-x-8 gap-y-6 sm:grid-cols-2"
+          className="mt-8 grid grid-cols-1 gap-x-8 gap-y-6 sm:grid-cols-2"
           onSubmit={(e) => e.preventDefault()}
         >
           <Field label="First name">
@@ -93,21 +112,6 @@ export default function SignUpForm({ open, onClose }) {
           </Field>
           <Field label="Last name">
             <input type="text" name="lastName" className={inputClass} />
-          </Field>
-
-          <Field label="Username">
-            <input type="text" name="username" className={inputClass} />
-          </Field>
-          <Field label="Sex">
-            <Select name="sex">
-              <option value="" disabled>
-                Select one
-              </option>
-              <option value="male">Male</option>
-              <option value="female">Female</option>
-              <option value="other">Other</option>
-              <option value="prefer-not-to-say">Prefer not to say</option>
-            </Select>
           </Field>
 
           <Field label="Pillar">
@@ -144,7 +148,16 @@ export default function SignUpForm({ open, onClose }) {
 
           <div className="sm:col-span-2">
             <Field label="Phone">
-              <input type="tel" name="phone" className={inputClass} />
+              <div className="flex gap-2">
+                <Select name="phoneCode" className="w-[120px] shrink-0 pr-8">
+                  {phoneCodes.map(({ flag, code, dial }) => (
+                    <option key={code} value={dial}>
+                      {flag} {code} {dial}
+                    </option>
+                  ))}
+                </Select>
+                <input type="tel" name="phone" className={inputClass} />
+              </div>
             </Field>
           </div>
 

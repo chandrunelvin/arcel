@@ -1,9 +1,9 @@
-import logo0 from '../assets/images/gif-image/inteligent0.png'
-import logo1 from '../assets/images/gif-image/dvelopment1.png'
-import logo2 from '../assets/images/gif-image/design2.png'
-import logo3 from '../assets/images/gif-image/construction3.png'
-import logo4 from '../assets/images/gif-image/opetration4.png'
-import logo5 from '../assets/images/gif-image/practice4.png'
+import logo0 from '../assets/images/gif-image/0.png'
+import logo1 from '../assets/images/gif-image/1.png'
+import logo2 from '../assets/images/gif-image/2.png'
+import logo3 from '../assets/images/gif-image/3.png'
+import logo4 from '../assets/images/gif-image/4.png'
+import logo5 from '../assets/images/gif-image/5.png'
 
 // Shared with LogoMark.jsx (home hero) and SenseGallery.jsx (traveling
 // center-icon animation) — frame 0 is the full combined mark, frames 1-5

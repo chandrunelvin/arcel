@@ -65,21 +65,6 @@ body,
   box-sizing: border-box;
 }
 
-/* Fills text glyphs with a dot grid instead of a solid color, mimicking an
-   LED dot-matrix display — used by the ticker in Marquee.jsx. */
-/* Grid is in `em` (not px) so it scales together with font-size — a bigger
-   ticker still reads as single dots per stroke, not a denser blob. Tuned
-   against a 30px baseline (3px grid ≈ 0.1em). */
-.dot-matrix-text {
-  background-image: radial-gradient(circle, #27fb00 0.03em, #27fb00 0.033em, transparent 0.036em);
-  background-size: 0.075em 0.075em;
-  background-position: 0 0;
-  -webkit-background-clip: text;
-  background-clip: text;
-  color: transparent;
-  /* filter: drop-shadow(0 0 2px #27fb00) drop-shadow(0 0 5px rgba(39, 251, 0, 0.7)); */
-}
-
 /* Continuous ticker pass for the "LAUNCHING 15 OCTOBER" banner —
    a single copy of the text loops from off-screen right to off-screen left. */
 @keyframes marquee-once {

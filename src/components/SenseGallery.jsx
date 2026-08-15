@@ -3,11 +3,12 @@ import { senses } from '../data/senses'
 import TopNav from './TopNav'
 import Marquee from './Marquee'
 import FooterNav from './FooterNav'
-import travelDevelopment from '../assets/images/senses-animation-image/dvelopment1.png'
-import travelDesign from '../assets/images/senses-animation-image/design2.png'
-import travelConstruction from '../assets/images/senses-animation-image/construction3.png'
-import travelOperations from '../assets/images/senses-animation-image/opetration4.png'
-import travelPractice from '../assets/images/senses-animation-image/practice5.png'
+import travelDevelopment from '../assets/images/gif-image/0.png'
+import travelDesign from '../assets/images/gif-image/1.png'
+import travelConstruction from '../assets/images/gif-image/2.png'
+import travelOperations from '../assets/images/gif-image/3.png'
+import travelPractice from '../assets/images/gif-image/4.png'
+import travelFinaleIcon from '../assets/images/gif-image/5.png'
 import travelFullLogo from '../assets/images/senses-animation-image/last-full-image.png'
 
 // One frame per sense, in the same order as `senses` (earth/development,
@@ -15,6 +16,11 @@ import travelFullLogo from '../assets/images/senses-animation-image/last-full-im
 // final full-logo frame shown centered over the whole grid before looping
 // back to the start.
 const travelFrames = [travelDevelopment, travelDesign, travelConstruction, travelOperations, travelPractice]
+
+// After the 5 tile icons, 5.png flashes centered over the whole grid, then
+// hides and hands off to the real full-logo frame, which stays on screen.
+const FINALE_ICON_STEP = senses.length
+const FINALE_LOGO_STEP = senses.length + 1
 
 // Full-screen expanded view opened from the footer nav. Each column shows
 // that sense's own background photo (senses.js `bg`) and its own center
@@ -30,12 +36,14 @@ export default function SenseGallery({ open, onClose, onSelect, activeKey }) {
   // one continuous slide instead of a cut — header and footer never move.
   const [expanding, setExpanding] = useState(null) // { key, sense, rect, targetRect, active, closing }
 
-  // One shared icon travels tile-to-tile (development → design →
-  // construction → operations → practice), then a final step centers the
-  // full logo over the whole grid and the animation stops there — it does
-  // not loop. Steps 0-4 map to senses[step]; step 5 is the finale/end state.
+  // Each tile owns its own icon (development → design → construction →
+  // operations → practice), clipped to that tile's own overflow-hidden box
+  // — travelStep just toggles which tile's icon is visible (fade + scale
+  // in place), nothing ever slides across a tile boundary. Steps 0-4 map
+  // to senses[step]. Step 5 flashes 5.png centered over the whole grid,
+  // then step 6 hides it and fades in the real full logo, where the
+  // animation stops — it does not loop.
   const [travelStep, setTravelStep] = useState(0)
-  const [travelPos, setTravelPos] = useState(null) // { left, top } in px, relative to gridRef
 
   // fresh run each time the gallery opens
   useEffect(() => {
@@ -43,39 +51,12 @@ export default function SenseGallery({ open, onClose, onSelect, activeKey }) {
   }, [open])
 
   useEffect(() => {
-    if (!open || expanding || travelStep >= senses.length) return
+    if (!open || expanding || travelStep >= FINALE_LOGO_STEP) return
     const id = setInterval(() => {
-      setTravelStep((s) => (s >= senses.length ? s : s + 1))
+      setTravelStep((s) => (s >= FINALE_LOGO_STEP ? s : s + 1))
     }, 2600)
     return () => clearInterval(id)
   }, [open, expanding, travelStep])
-
-  useEffect(() => {
-    if (!open) return
-    const measure = () => {
-      const gridEl = gridRef.current
-      if (!gridEl) return
-      const gridBox = gridEl.getBoundingClientRect()
-      if (travelStep < senses.length) {
-        const tileEl = btnRefs.current[senses[travelStep].key]
-        if (!tileEl) return
-        const box = tileEl.getBoundingClientRect()
-        setTravelPos({
-          left: box.left - gridBox.left + box.width / 2,
-          top: box.top - gridBox.top + box.height / 2,
-        })
-      } else {
-        setTravelPos({ left: gridBox.width / 2, top: gridBox.height / 2 })
-      }
-    }
-    // rAF so layout (e.g. right after the gallery opens) has settled first
-    const id = requestAnimationFrame(measure)
-    window.addEventListener('resize', measure)
-    return () => {
-      cancelAnimationFrame(id)
-      window.removeEventListener('resize', measure)
-    }
-  }, [open, travelStep])
 
   useEffect(() => {
     // leaving the gallery (footer nav pick, close, back-to-detail, etc.) —
@@ -167,30 +148,70 @@ export default function SenseGallery({ open, onClose, onSelect, activeKey }) {
                   className="absolute inset-0"
                   style={{ background: '#00000099' }}
                 />
+
+                {/* this tile's own icon, clipped by this tile's own
+                    overflow-hidden above — fades/scales in place, never
+                    slides, so it can never render past this tile's edge. */}
+                {!expanding && (
+                  <div
+                    className="pointer-events-none absolute inset-0 flex items-center justify-center transition-[opacity,transform] duration-500 ease-out"
+                    style={{
+                      opacity: travelStep === i ? 1 : 0,
+                      transform: `scale(${travelStep === i ? 1 : 0.4})`,
+                    }}
+                  >
+                    <img
+                      key={travelStep === i ? 'spin' : 'still'}
+                      src={travelFrames[i]}
+                      alt=""
+                      className={`w-[62%] drop-shadow-[0_0_30px_rgba(0,0,0,0.6)] sm:w-[70%] ${
+                        travelStep === i ? 'animate-spin-once' : ''
+                      }`}
+                    />
+                  </div>
+                )}
               </div>
             </button>
           )
         })}
 
-        {/* the one shared traveling icon — see the travelStep effects above.
-            Positioned in px relative to the grid, so it can move smoothly
-            between tiles that don't share a common CSS position. */}
-        {travelPos && !expanding && (
+        {/* finale, step 1: 5.png flashes centered over the whole grid, then
+            hides once the real full logo takes over below. */}
+        {!expanding && (
           <div
-            className="pointer-events-none absolute z-10 flex items-center justify-center transition-[left,top] duration-[1400ms] ease-in-out"
-            style={{ left: travelPos.left, top: travelPos.top, transform: 'translate(-50%, -50%)' }}
+            className="pointer-events-none absolute inset-0 z-10 flex items-center justify-center overflow-hidden transition-[opacity,transform] duration-500 ease-out"
+            style={{
+              opacity: travelStep === FINALE_ICON_STEP ? 1 : 0,
+              transform: `scale(${travelStep === FINALE_ICON_STEP ? 1 : 0.4})`,
+            }}
           >
-            <div className="relative flex h-[180px] w-[180px] items-center justify-center sm:h-[220px] sm:w-[220px]">
-              <img
-                key={travelStep}
-                src={travelStep === senses.length ? travelFullLogo : travelFrames[travelStep]}
-                alt=""
-                className={`relative w-full drop-shadow-[0_0_30px_rgba(0,0,0,0.6)] ${
-                  travelStep === senses.length ? '' : 'animate-spin-once'
-                }`}
-                style={travelStep === senses.length ? undefined : { animationDuration: '5s' }}
-              />
-            </div>
+            <img
+              key={travelStep === FINALE_ICON_STEP ? 'spin' : 'still'}
+              src={travelFinaleIcon}
+              alt=""
+              className={`w-[180px] drop-shadow-[0_0_30px_rgba(0,0,0,0.6)] sm:w-[220px] ${
+                travelStep === FINALE_ICON_STEP ? 'animate-spin-once' : ''
+              }`}
+            />
+          </div>
+        )}
+
+        {/* finale, step 2: real full logo fades in centered over the whole
+            grid — no sliding into place, just a contained fade, so it's
+            never visible straddling tile edges either. */}
+        {!expanding && (
+          <div
+            className="pointer-events-none absolute inset-0 z-10 flex items-center justify-center overflow-hidden transition-[opacity,transform] duration-500 ease-out"
+            style={{
+              opacity: travelStep === FINALE_LOGO_STEP ? 1 : 0,
+              transform: `scale(${travelStep === FINALE_LOGO_STEP ? 1 : 0.4})`,
+            }}
+          >
+            <img
+              src={travelFullLogo}
+              alt=""
+              className="w-[180px] drop-shadow-[0_0_30px_rgba(0,0,0,0.6)] sm:w-[220px]"
+            />
           </div>
         )}
       </div>
