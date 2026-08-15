@@ -18,6 +18,53 @@
   --input: 0 0% 30%;
   --ring: 240 82% 51%;
   --arcelblack: 0 0% 0%;
+  --arcel-blue: #191bdf;
+  --arcel-black: #000000;
+  --arcel-dark-gray: #4e4e4e;
+  --arcel-white: #ffffff;
+  --blue-25: #b4ccf7;
+  --blue-50: #87a0f0;
+  --blue-100: #5e71ea;
+  --blue-200: #3a4fe4;
+  --blue-400: #191bdf;
+  --blue-500: #1547d2;
+  --blue-600: #113cbd;
+  --blue-700: #0d31a6;
+  --blue-800: #0a268f;
+  --blue-900: #071c78;
+  --gray-20: #f5f5f5;
+  --gray-50: #ebebeb;
+  --gray-100: #d6d6d6;
+  --gray-200: #c2c2c2;
+  --gray-300: #adadad;
+  --gray-400: #a3a3a3;
+  --gray-500: #949494;
+  --gray-600: #858585;
+  --gray-700: #707070;
+  --gray-800: #525252;
+  --gray-900: #333333;
+  --gray-950: #141414;
+  --line: #cececf;
+  --graphite: #2b2b2b;
+  --earth: #ffc639;
+  --air: #895ef6;
+  --fire: #f90d21;
+  --water: #20cbdd;
+  --ether: #7ae3a9;
+  --ether-strong: #08de73;
+  --surface-inverse: var(--arcel-black);
+  --ink-inverse: var(--arcel-white);
+  --surface: var(--arcel-black);
+  --surface-sunken: var(--gray-950);
+  --ink: var(--arcel-white);
+  --ink-muted: var(--gray-300);
+  --ink-faint: var(--gray-600);
+  --border: var(--graphite);
+  --border-strong: var(--gray-700);
+  --accent: var(--arcel-white);
+  --accent-ink: var(--arcel-black);
+  --active-stage: var(--arcel-blue);
+  --beat-dur: 1950ms;
 }
 
 @theme inline {
@@ -196,6 +243,39 @@ body,
   animation: overlay-fade 0.35s ease-out forwards;
 }
 
+/* Home hero crossfade — title/description/bg image change in sync with
+   the FlywheelMark's wedges as it cycles through each sense */
+@keyframes hero-fade {
+  from {
+    opacity: 0;
+  }
+  to {
+    opacity: 1;
+  }
+}
+
+.animate-hero-fade {
+  animation: hero-fade 0.5s ease-out forwards;
+}
+
+/* Footer nav's auto-rotation progress bar — fills left-to-right under the
+   active tab over its dwell time, mirroring the flywheel's own beat pacing */
+@keyframes footer-progress {
+  from {
+    transform: scaleX(0);
+  }
+  to {
+    transform: scaleX(1);
+  }
+}
+
+.animate-footer-progress {
+  transform: scaleX(0);
+  animation-name: footer-progress;
+  animation-timing-function: linear;
+  animation-fill-mode: forwards;
+}
+
 /* Footer nav's delayed entrance on initial page load */
 @keyframes fade-in-up {
   from {
@@ -210,4 +290,99 @@ body,
 
 .animate-fade-in-up {
   animation: fade-in-up 0.6s cubic-bezier(0.16, 1, 0.3, 1) forwards;
+}
+
+@keyframes flywheel-rotate {
+  0%,
+  10% {
+    transform: rotate(0deg);
+  }
+  14%,
+  24% {
+    transform: rotate(60deg);
+  }
+  28%,
+  38% {
+    transform: rotate(120deg);
+  }
+  42%,
+  52% {
+    transform: rotate(180deg);
+  }
+  56%,
+  66% {
+    transform: rotate(240deg);
+  }
+  70%,
+  80% {
+    transform: rotate(300deg);
+  }
+  84%,
+  100% {
+    transform: rotate(360deg);
+  }
+}
+
+@keyframes flywheel-wipe {
+  0%,
+  100% {
+    width: 0;
+    opacity: 0;
+  }
+  3% {
+    width: 0;
+    opacity: 1;
+  }
+  8%,
+  13% {
+    width: var(--wipe-width);
+    opacity: 1;
+  }
+  16% {
+    width: 0;
+    opacity: 0;
+  }
+}
+
+.flywheel {
+  -webkit-text-size-adjust: 100%;
+  -webkit-font-smoothing: antialiased;
+  color: var(--arcel-white);
+  font: inherit;
+  overflow: visible;
+}
+
+.flywheel__svg {
+  position: absolute;
+  inset: 0;
+  display: block;
+  width: 100%;
+  height: 100%;
+  max-width: 100%;
+  overflow: visible;
+}
+
+.flywheel [data-fill-rotor] {
+  transform-box: fill-box;
+  transform-origin: center;
+  animation: flywheel-rotate 9.6s cubic-bezier(0.22, 0.61, 0.36, 1) infinite;
+}
+
+.flywheel [data-fill-wipe] {
+  width: 0;
+  opacity: 0;
+  animation: flywheel-wipe 9.6s linear infinite;
+  animation-delay: var(--wipe-delay);
+}
+
+.flywheel .mk__edge {
+  fill: transparent;
+  stroke: rgba(255, 255, 255, 0.92);
+  stroke-width: 1.15;
+  stroke-linejoin: round;
+  vector-effect: non-scaling-stroke;
+}
+
+.flywheel .mk__ink {
+  opacity: 0.98;
 }

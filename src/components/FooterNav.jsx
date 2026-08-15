@@ -2,7 +2,7 @@ import { Button } from "./ui/button";
 import { Card, CardContent } from "./ui/card";
 import { senses } from "../data/senses";
 
-export default function FooterNav({ onSelect, activeKey }) {
+export default function FooterNav({ onSelect, activeKey, rotationMs }) {
   return (
     <footer
       className="grid grid-cols-5"
@@ -21,11 +21,20 @@ export default function FooterNav({ onSelect, activeKey }) {
             <Card
               className="relative h-full w-full overflow-hidden rounded-none border border-solid border-[#4d4d4d] bg-arcelblack text-white shadow-none"
               style={
-                isActive
+                isActive && !rotationMs
                   ? { boxShadow: `inset 0 -3px 0 0 ${sense.accent}` }
                   : undefined
               }
             >
+              {/* auto-rotation progress bar — fills over the active tab's
+                  dwell time, in sync with the flywheel beat driving it;
+                  remounts (and so restarts) each time this tab goes active */}
+              {isActive && rotationMs ? (
+                <span
+                  className="absolute inset-x-0 bottom-0 z-10 h-[3px] origin-left animate-footer-progress"
+                  style={{ background: sense.accent, animationDuration: `${rotationMs}ms` }}
+                />
+              ) : null}
               <CardContent className="mx-auto flex h-full w-full max-w-[719px] flex-col items-center justify-center gap-1 p-0 px-2 sm:flex-row sm:justify-between sm:gap-4 sm:px-6">
                 <div className="hidden min-w-0 flex-1 flex-col items-start gap-0.5 whitespace-normal sm:flex">
                   <p

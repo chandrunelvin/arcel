@@ -3,24 +3,23 @@ import { senses } from '../data/senses'
 import TopNav from './TopNav'
 import Marquee from './Marquee'
 import FooterNav from './FooterNav'
-import travelDevelopment from '../assets/images/gif-image/0.png'
-import travelDesign from '../assets/images/gif-image/1.png'
-import travelConstruction from '../assets/images/gif-image/2.png'
-import travelOperations from '../assets/images/gif-image/3.png'
-import travelPractice from '../assets/images/gif-image/4.png'
-import travelFinaleIcon from '../assets/images/gif-image/5.png'
-import travelFullLogo from '../assets/images/senses-animation-image/last-full-image.png'
+import lastLogoFirst from '../assets/images/senses-animation-image/last-logo-first.svg'
+import rotatLogoSecond from '../assets/images/senses-animation-image/rotat-logo-secend.svg'
 
-// One frame per sense, in the same order as `senses` (earth/development,
-// air/design, fire/construction, water/operations, ether/practice), plus a
-// final full-logo frame shown centered over the whole grid before looping
-// back to the start.
-const travelFrames = [travelDevelopment, travelDesign, travelConstruction, travelOperations, travelPractice]
+function SenseSubtitle({ element, sense, accent, className = '' }) {
+  return (
+    <p className={className}>
+      <span className="text-white">Intelligence / </span>
+      <span style={{ color: accent }}>{element.toUpperCase()}</span>
+      <span className="text-white"> · {sense}</span>
+    </p>
+  )
+}
 
-// After the 5 tile icons, 5.png flashes centered over the whole grid, then
-// hides and hands off to the real full-logo frame, which stays on screen.
-const FINALE_ICON_STEP = senses.length
-const FINALE_LOGO_STEP = senses.length + 1
+// Centered mark shown over the whole grid, in two steps: the static logo
+// lockup first, then the colored mark, which spins continuously once shown.
+const LOGO_STEP = 0
+const MARK_STEP = 1
 
 // Full-screen expanded view opened from the footer nav. Each column shows
 // that sense's own background photo (senses.js `bg`) and its own center
@@ -36,26 +35,21 @@ export default function SenseGallery({ open, onClose, onSelect, activeKey }) {
   // one continuous slide instead of a cut — header and footer never move.
   const [expanding, setExpanding] = useState(null) // { key, sense, rect, targetRect, active, closing }
 
-  // Each tile owns its own icon (development → design → construction →
-  // operations → practice), clipped to that tile's own overflow-hidden box
-  // — travelStep just toggles which tile's icon is visible (fade + scale
-  // in place), nothing ever slides across a tile boundary. Steps 0-4 map
-  // to senses[step]. Step 5 flashes 5.png centered over the whole grid,
-  // then step 6 hides it and fades in the real full logo, where the
-  // animation stops — it does not loop.
-  const [travelStep, setTravelStep] = useState(0)
+  // Single centered mark over the whole grid — no per-tile animation.
+  // Starts on the static logo lockup, then switches to the colored mark
+  // (which spins continuously) shortly after the gallery opens, and stays
+  // there — it does not loop back.
+  const [travelStep, setTravelStep] = useState(LOGO_STEP)
 
   // fresh run each time the gallery opens
   useEffect(() => {
-    if (open) setTravelStep(0)
+    if (open) setTravelStep(LOGO_STEP)
   }, [open])
 
   useEffect(() => {
-    if (!open || expanding || travelStep >= FINALE_LOGO_STEP) return
-    const id = setInterval(() => {
-      setTravelStep((s) => (s >= FINALE_LOGO_STEP ? s : s + 1))
-    }, 2600)
-    return () => clearInterval(id)
+    if (!open || expanding || travelStep >= MARK_STEP) return
+    const id = setTimeout(() => setTravelStep(MARK_STEP), 1400)
+    return () => clearTimeout(id)
   }, [open, expanding, travelStep])
 
   useEffect(() => {
@@ -148,69 +142,26 @@ export default function SenseGallery({ open, onClose, onSelect, activeKey }) {
                   className="absolute inset-0"
                   style={{ background: '#00000099' }}
                 />
-
-                {/* this tile's own icon, clipped by this tile's own
-                    overflow-hidden above — fades/scales in place, never
-                    slides, so it can never render past this tile's edge. */}
-                {!expanding && (
-                  <div
-                    className="pointer-events-none absolute inset-0 flex items-center justify-center transition-[opacity,transform] duration-500 ease-out"
-                    style={{
-                      opacity: travelStep === i ? 1 : 0,
-                      transform: `scale(${travelStep === i ? 1 : 0.4})`,
-                    }}
-                  >
-                    <img
-                      key={travelStep === i ? 'spin' : 'still'}
-                      src={travelFrames[i]}
-                      alt=""
-                      className={`w-[62%] drop-shadow-[0_0_30px_rgba(0,0,0,0.6)] sm:w-[70%] ${
-                        travelStep === i ? 'animate-spin-once' : ''
-                      }`}
-                    />
-                  </div>
-                )}
               </div>
             </button>
           )
         })}
 
-        {/* finale, step 1: 5.png flashes centered over the whole grid, then
-            hides once the real full logo takes over below. */}
+        {/* single centered mark over the whole grid — logo lockup first,
+            then the colored mark, which spins continuously once shown */}
         {!expanding && (
-          <div
-            className="pointer-events-none absolute inset-0 z-10 flex items-center justify-center overflow-hidden transition-[opacity,transform] duration-500 ease-out"
-            style={{
-              opacity: travelStep === FINALE_ICON_STEP ? 1 : 0,
-              transform: `scale(${travelStep === FINALE_ICON_STEP ? 1 : 0.4})`,
-            }}
-          >
+          <div className="pointer-events-none absolute inset-0 z-10 flex items-center justify-center overflow-hidden">
             <img
-              key={travelStep === FINALE_ICON_STEP ? 'spin' : 'still'}
-              src={travelFinaleIcon}
+              src={lastLogoFirst}
               alt=""
-              className={`w-[180px] drop-shadow-[0_0_30px_rgba(0,0,0,0.6)] sm:w-[220px] ${
-                travelStep === FINALE_ICON_STEP ? 'animate-spin-once' : ''
-              }`}
+              className="absolute w-[220px] drop-shadow-[0_0_30px_rgba(0,0,0,0.6)] transition-opacity duration-500 ease-out sm:w-[300px]"
+              style={{ opacity: travelStep === LOGO_STEP ? 1 : 0 }}
             />
-          </div>
-        )}
-
-        {/* finale, step 2: real full logo fades in centered over the whole
-            grid — no sliding into place, just a contained fade, so it's
-            never visible straddling tile edges either. */}
-        {!expanding && (
-          <div
-            className="pointer-events-none absolute inset-0 z-10 flex items-center justify-center overflow-hidden transition-[opacity,transform] duration-500 ease-out"
-            style={{
-              opacity: travelStep === FINALE_LOGO_STEP ? 1 : 0,
-              transform: `scale(${travelStep === FINALE_LOGO_STEP ? 1 : 0.4})`,
-            }}
-          >
             <img
-              src={travelFullLogo}
+              src={rotatLogoSecond}
               alt=""
-              className="w-[180px] drop-shadow-[0_0_30px_rgba(0,0,0,0.6)] sm:w-[220px]"
+              className="animate-spin-slow absolute w-[150px] drop-shadow-[0_0_30px_rgba(0,0,0,0.6)] transition-opacity duration-500 ease-out sm:w-[190px]"
+              style={{ opacity: travelStep === MARK_STEP ? 1 : 0 }}
             />
           </div>
         )}
@@ -276,51 +227,42 @@ export default function SenseGallery({ open, onClose, onSelect, activeKey }) {
           >
             {/* left label — desktop/tablet only */}
             <div className="absolute left-6 top-1/2 hidden -translate-y-1/2 text-left sm:block sm:left-14 md:left-24">
-              <p className="font-roboto text-xs font-normal leading-[16px] text-white">
-                {expanding.sense.element}
-              </p>
               <h1
-                className="mt-[15px] font-heading text-[clamp(20px,1.8vw,34px)] font-semibold leading-tight tracking-[-0.32px]"
-                style={{ color: expanding.sense.accent }}
+                className="font-heading text-[clamp(20px,1.8vw,34px)] font-semibold leading-tight tracking-[-0.32px] text-white"
               >
                 {expanding.sense.title}
               </h1>
-              <p className="mt-[15px] font-roboto text-[10px] font-normal uppercase tracking-[0.2em] text-white">
-                Intelligence / {expanding.sense.element} · {expanding.sense.sense}
-              </p>
+              <SenseSubtitle
+                element={expanding.sense.element}
+                sense={expanding.sense.sense}
+                accent={expanding.sense.accent}
+                className="mt-[15px] font-roboto text-[10px] font-normal uppercase tracking-[0.2em]"
+              />
             </div>
 
             {/* accent ring + recolored mark */}
             <div className="relative flex h-[220px] w-[220px] shrink-0 items-center justify-center sm:h-[380px] sm:w-[380px]">
-              {expanding.active && (
-                <div
-                  key={`ring-${expanding.key}`}
-                  className="animate-spin-once absolute inset-0 rounded-full border"
-                  style={{ borderColor: expanding.sense.accent }}
-                />
-              )}
               <img
                 key={`mark-${expanding.key}`}
                 src={expanding.sense.centerImage}
                 alt={`${expanding.sense.element} — ${expanding.sense.title}`}
                 className={expanding.active ? 'animate-spin-once relative w-[65%]' : 'relative w-[65%]'}
               />
-              <p className="absolute bottom-2 font-roboto text-xs text-white/60 sm:bottom-4">
-                {expanding.sense.element}
-              </p>
             </div>
 
             {/* title + description — mobile only, shown below the mark */}
             <div className="flex max-w-xs flex-col items-center gap-3 text-center sm:hidden">
-              <p className="font-roboto text-[11px] font-normal uppercase tracking-[0.2em] text-white">
-                {expanding.sense.element} · {expanding.sense.sense}
-              </p>
               <h1
-                className="font-heading text-2xl font-semibold leading-tight tracking-[-0.32px]"
-                style={{ color: expanding.sense.accent }}
+                className="font-heading text-2xl font-semibold leading-tight tracking-[-0.32px] text-white"
               >
                 {expanding.sense.title}
               </h1>
+              <SenseSubtitle
+                element={expanding.sense.element}
+                sense={expanding.sense.sense}
+                accent={expanding.sense.accent}
+                className="font-roboto text-[11px] font-normal uppercase tracking-[0.2em]"
+              />
               <p className="font-roboto text-sm leading-relaxed text-white/70">
                 {expanding.sense.description}
               </p>

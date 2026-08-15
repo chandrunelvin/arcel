@@ -5,6 +5,16 @@ import TopNav from './TopNav'
 import Marquee from './Marquee'
 import heroGridOverlay from '../assets/hero-grid-overlay.svg'
 
+function SenseSubtitle({ element, sense, accent, className = '' }) {
+  return (
+    <p className={className}>
+      <span className="text-white">Intelligence / </span>
+      <span style={{ color: accent }}>{element.toUpperCase()}</span>
+      <span className="text-white"> · {sense}</span>
+    </p>
+  )
+}
+
 // Single full-screen "detail" page for one sense — drilled into from the
 // SenseGallery. Same hero composition as the homepage (photo + ringed mark +
 // left heading / right description) but re-themed per sense, with the
@@ -77,50 +87,43 @@ export default function SenseDetail({ open, activeKey, onSelect, onBack, onClose
         <div className="relative flex flex-1 flex-col items-center justify-start gap-6 px-6 pb-10 pt-20 sm:flex-row sm:justify-center sm:gap-0 sm:py-16 sm:py-24">
           {/* left label — desktop/tablet only */}
           <div className="absolute left-6 top-1/2 hidden -translate-y-1/2 text-left sm:block sm:left-14 md:left-24">
-            <p className="font-roboto text-xs font-normal leading-[16px] text-white">
-              {sense.element}
-            </p>
             <h1
-              className="mt-[15px] font-heading text-[clamp(20px,1.8vw,34px)] font-semibold leading-tight tracking-[-0.32px]"
-              style={{ color: sense.accent }}
+              className="font-heading text-[clamp(20px,1.8vw,34px)] font-semibold leading-tight tracking-[-0.32px] text-white"
             >
               {sense.title}
             </h1>
-            <p className="mt-[15px] font-roboto text-[10px] font-normal uppercase tracking-[0.2em] text-white">
-              Intelligence / {sense.element} · {sense.sense}
-            </p>
+            <SenseSubtitle
+              element={sense.element}
+              sense={sense.sense}
+              accent={sense.accent}
+              className="mt-[15px] font-roboto text-[10px] font-normal uppercase tracking-[0.2em]"
+            />
           </div>
 
-          {/* accent ring + recolored mark */}
+          {/* center mark */}
           <div className="relative flex h-[220px] w-[220px] shrink-0 items-center justify-center sm:h-[380px] sm:w-[380px]">
-            <div
-              key={`ring-${sense.key}`}
-              className="animate-spin-once absolute inset-0 rounded-full border"
-              style={{ borderColor: sense.accent }}
-            />
             <img
               key={`mark-${sense.key}`}
               src={sense.centerImage}
               alt={`${sense.element} — ${sense.title}`}
               className="animate-spin-once relative w-[65%]"
             />
-            <p className="absolute bottom-2 font-roboto text-xs text-white/60 sm:bottom-4">
-              {sense.element}
-            </p>
           </div>
 
           {/* title + description — mobile only, shown below the mark and
               above the footer nav */}
           <div className="flex max-w-xs flex-col items-center gap-3 text-center sm:hidden">
-            <p className="font-roboto text-[11px] font-normal uppercase tracking-[0.2em] text-white">
-              {sense.element} · {sense.sense}
-            </p>
             <h1
-              className="font-heading text-2xl font-semibold leading-tight tracking-[-0.32px]"
-              style={{ color: sense.accent }}
+              className="font-heading text-2xl font-semibold leading-tight tracking-[-0.32px] text-white"
             >
               {sense.title}
             </h1>
+            <SenseSubtitle
+              element={sense.element}
+              sense={sense.sense}
+              accent={sense.accent}
+              className="font-roboto text-[11px] font-normal uppercase tracking-[0.2em]"
+            />
             <p className="font-roboto text-sm leading-relaxed text-white/70">
               {sense.description}
             </p>
