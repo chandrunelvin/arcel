@@ -164,7 +164,7 @@ body,
 }
 
 .animate-spin-once-slow {
-  animation: spin-once 3.6s cubic-bezier(0.16, 1, 0.3, 1);
+  animation: spin-once 4.5s cubic-bezier(0.16, 1, 0.3, 1);
   backface-visibility: hidden;
   transform-style: preserve-3d;
   will-change: transform;

@@ -250,7 +250,7 @@ export default function SignUpForm({ open, onClose, language = 'en', copy }) {
             />
           </div>
           <div
-            className="relative flex h-8 w-[130px] items-center overflow-hidden sm:h-10 sm:w-[160px]"
+            className="relative flex h-8 w-[130px] items-center overflow-hidden sm:h-8 sm:w-[160px]"
             style={{ background: '#191BDF' }}
           >
             <img
