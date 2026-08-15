@@ -16,16 +16,11 @@ function SenseSubtitle({ element, sense, accent, className = '' }) {
   )
 }
 
-// Centered mark shown over the whole grid, in two steps: the static logo
-// lockup first, then the colored mark, which spins continuously once shown.
-const LOGO_STEP = 0
-const MARK_STEP = 1
-
 // Full-screen expanded view opened from the footer nav. Each column shows
 // that sense's own background photo (senses.js `bg`) and its own center
 // artwork, tinted with that sense's accent. The real FooterNav menu sits
 // below the grid once, shared by every column.
-export default function SenseGallery({ open, onClose, onSelect, activeKey }) {
+export default function SenseGallery({ open, onClose, onSelect }) {
   const btnRefs = useRef({})
   const gridRef = useRef(null)
   // FLIP-style transition: the clicked column's own photo grows from its
@@ -34,23 +29,6 @@ export default function SenseGallery({ open, onClose, onSelect, activeKey }) {
   // that same photo full-bleed in that same area), so the swap reads as
   // one continuous slide instead of a cut — header and footer never move.
   const [expanding, setExpanding] = useState(null) // { key, sense, rect, targetRect, active, closing }
-
-  // Single centered mark over the whole grid — no per-tile animation.
-  // Starts on the static logo lockup, then switches to the colored mark
-  // (which spins continuously) shortly after the gallery opens, and stays
-  // there — it does not loop back.
-  const [travelStep, setTravelStep] = useState(LOGO_STEP)
-
-  // fresh run each time the gallery opens
-  useEffect(() => {
-    if (open) setTravelStep(LOGO_STEP)
-  }, [open])
-
-  useEffect(() => {
-    if (!open || expanding || travelStep >= MARK_STEP) return
-    const id = setTimeout(() => setTravelStep(MARK_STEP), 1400)
-    return () => clearTimeout(id)
-  }, [open, expanding, travelStep])
 
   useEffect(() => {
     // leaving the gallery (footer nav pick, close, back-to-detail, etc.) —
@@ -147,29 +125,30 @@ export default function SenseGallery({ open, onClose, onSelect, activeKey }) {
           )
         })}
 
-        {/* single centered mark over the whole grid — logo lockup first,
-            then the colored mark, which spins continuously once shown */}
+        {/* single centered "arcel Intelligence" lockup over the whole grid
+            — wordmark and mark side by side as one image, only the mark
+            half spins */}
         {!expanding && (
-          <div className="pointer-events-none absolute inset-0 z-10 flex items-center justify-center overflow-hidden">
+          <div className="animate-panel-in pointer-events-none absolute inset-0 z-10 flex items-center justify-center gap-2 overflow-hidden sm:gap-3">
             <img
               src={lastLogoFirst}
               alt=""
-              className="absolute w-[220px] drop-shadow-[0_0_30px_rgba(0,0,0,0.6)] transition-opacity duration-500 ease-out sm:w-[300px]"
-              style={{ opacity: travelStep === LOGO_STEP ? 1 : 0 }}
+              className="w-[90px] drop-shadow-[0_0_30px_rgba(0,0,0,0.6)] sm:w-[120px]"
             />
             <img
               src={rotatLogoSecond}
               alt=""
-              className="animate-spin-slow absolute w-[150px] drop-shadow-[0_0_30px_rgba(0,0,0,0.6)] transition-opacity duration-500 ease-out sm:w-[190px]"
-              style={{ opacity: travelStep === MARK_STEP ? 1 : 0 }}
+              className="animate-spin-slow w-[55px] drop-shadow-[0_0_30px_rgba(0,0,0,0.6)] sm:w-[72px]"
             />
           </div>
         )}
       </div>
 
       {/* real footer menu, same as the home page — was missing before, so
-          the space below the grid/expanded photo just looked empty */}
-      <FooterNav activeKey={expanding?.key ?? activeKey} onSelect={(key) => onSelect?.(key)} />
+          the space below the grid/expanded photo just looked empty. No tab
+          is active while sitting on the overview grid — only once a tile
+          is picked and expanded does its tab light up. */}
+      <FooterNav activeKey={expanding?.key ?? null} onSelect={(key) => onSelect?.(key)} />
 
       {expanding && (
         <div

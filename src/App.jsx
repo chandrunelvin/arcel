@@ -67,12 +67,14 @@ function App() {
     return () => clearTimeout(id)
   }, [beatIndex, nav.view])
 
-  // once the flywheel completes a full 6-wedge cycle, open the gallery
-  // (mobile skips straight to the detail page, matching manual taps below)
+  // once the flywheel completes a full 6-wedge cycle, open the gallery —
+  // on mobile too, so the "ARCEL Intelligence" lockup shows there as well,
+  // instead of skipping straight to the Development detail page. Manual
+  // footer taps below still take mobile straight to the detail page.
   useEffect(() => {
     if (beatIndex < BEATS) return
-    setNav({ view: isMobile ? 'detail' : 'gallery', activeKey: senses[0].key })
-  }, [beatIndex, isMobile])
+    setNav({ view: 'gallery', activeKey: senses[0].key })
+  }, [beatIndex])
 
   // reset back to the unfilled mark whenever we return to the home view
   useEffect(() => {
@@ -204,7 +206,6 @@ function App() {
 
       <SenseGallery
         open={nav.view === 'gallery'}
-        activeKey={nav.activeKey}
         onSelect={(key) => setNav({ view: 'detail', activeKey: key })}
         onClose={() => setNav({ view: 'closed', activeKey: null })}
       />

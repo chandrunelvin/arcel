@@ -2,6 +2,7 @@ import { useEffect, useRef, useState } from 'react'
 import { senses } from '../data/senses'
 import { countries } from '../data/countries'
 import arcelKonnectLogo from '../assets/Arcel-Konnect-form-logo.png'
+import konnectMovingImage from '../assets/images/form-image/kannet-image2.svg'
 
 // every country has a real dial code, so the phone selector reuses the
 // same full list — flag + name + dial code stay in sync everywhere.
@@ -260,18 +261,35 @@ export default function SignUpForm({ open, onClose }) {
           type="button"
           onClick={onClose}
           aria-label="Close"
-          className="absolute right-5 top-5 flex h-9 w-9 items-center justify-center border border-arcel-blue text-white transition-colors hover:bg-arcel-blue/20 sm:right-8 sm:top-8"
+          className="absolute right-5 top-5 z-10 flex h-9 w-9 items-center justify-center border border-arcel-blue text-white transition-colors hover:bg-arcel-blue/20 sm:right-8 sm:top-8"
         >
           <svg viewBox="0 0 24 24" className="h-4 w-4" fill="none" stroke="currentColor" strokeWidth="1.8">
             <path d="M6 6l12 12M18 6L6 18" strokeLinecap="round" />
           </svg>
         </button>
 
-        <img
-          src={arcelKonnectLogo}
-          alt="Arcel Konnect"
-          className="h-8 w-auto sm:h-10"
-        />
+        {/* "arcel" (cropped from the lockup, plain on the card background)
+            + "Konnect" — only the Konnect half gets a blue box, and it's
+            the live, continuously-scrolling graphic, not the static lockup */}
+        <div className="flex items-center">
+          <div className="relative h-8 w-[83px] overflow-hidden sm:h-10 sm:w-[103px]">
+            <img
+              src={arcelKonnectLogo}
+              alt="Arcel"
+              className="absolute left-0 top-0 h-full w-auto max-w-none"
+            />
+          </div>
+          <div
+            className="relative flex h-8 w-[130px] items-center overflow-hidden sm:h-10 sm:w-[160px]"
+            style={{ background: '#191BDF' }}
+          >
+            <img
+              src={konnectMovingImage}
+              alt="Konnect"
+              className="animate-ticker-loop absolute h-5 w-auto max-w-none sm:h-7"
+            />
+          </div>
+        </div>
         <h1 className="mt-3 font-heading text-3xl font-bold leading-tight tracking-[-0.02em] text-white sm:text-5xl">
           Enter the ecosystem.
         </h1>

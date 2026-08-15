@@ -276,6 +276,23 @@ body,
   animation-fill-mode: forwards;
 }
 
+/* Small, self-contained ticker loop — unlike .animate-marquee-once (which
+   travels the full viewport width), this scrolls relative to its own box,
+   so it stays visible inside small fixed-width containers like the sign-up
+   form's Konnect badge instead of sliding off across the whole screen. */
+@keyframes ticker-loop {
+  from {
+    transform: translateX(100%);
+  }
+  to {
+    transform: translateX(-100%);
+  }
+}
+
+.animate-ticker-loop {
+  animation: ticker-loop 3.2s linear infinite;
+}
+
 /* Footer nav's delayed entrance on initial page load */
 @keyframes fade-in-up {
   from {
