@@ -181,7 +181,7 @@ function App() {
             className="animate-hero-fade flex max-w-sm flex-col items-center gap-3 text-center sm:hidden"
           >
             <h1
-              className="font-heading text-3xl font-semibold leading-tight tracking-[-0.32px] text-white"
+              className="font-heading text-2xl font-semibold leading-tight tracking-[-0.32px] text-white"
             >
               {homeSense.title}
             </h1>
@@ -196,7 +196,7 @@ function App() {
                 <span className="text-white/70"> · {homeSense.sense}</span>
               </p>
             )}
-            <p className="font-roboto text-base leading-7 text-white/88">
+            <p className="font-roboto text-sm leading-6 text-white/88">
               {homeSense.description}
             </p>
           </div>

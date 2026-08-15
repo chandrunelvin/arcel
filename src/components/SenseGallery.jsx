@@ -250,7 +250,7 @@ export default function SenseGallery({ open, onClose, onSelect, hideTiles = fals
             {/* title + description — mobile only, shown below the mark */}
             <div className="flex max-w-xs flex-col items-center gap-3 text-center sm:hidden">
               <h1
-                className="font-heading text-3xl font-semibold leading-tight tracking-[-0.32px] text-white"
+                className="font-heading text-2xl font-semibold leading-tight tracking-[-0.32px] text-white"
               >
                 {expanding.sense.title}
               </h1>
@@ -260,7 +260,7 @@ export default function SenseGallery({ open, onClose, onSelect, hideTiles = fals
                 accent={expanding.sense.accent}
                 className="font-roboto text-[11px] font-normal uppercase tracking-[0.2em]"
               />
-              <p className="font-roboto text-sm leading-relaxed text-white/70">
+              <p className="font-roboto text-xs leading-relaxed text-white/70">
                 {expanding.sense.description}
               </p>
             </div>
