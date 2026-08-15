@@ -48,7 +48,7 @@ export default function FooterNav({ onSelect, activeKey, rotationMs }) {
                   </p>
                 </div>
                 <div
-                  className="flex h-8 w-8 shrink-0 items-center justify-center sm:h-[clamp(28px,2.2vw,58px)] sm:w-[clamp(28px,2.2vw,58px)]"
+                  className="flex h-[25.6px] w-[25.6px] shrink-0 items-center justify-center sm:h-[clamp(22.4px,1.76vw,46.4px)] sm:w-[clamp(22.4px,1.76vw,46.4px)]"
                 >
                   <img
                     className="h-full w-full object-contain"
