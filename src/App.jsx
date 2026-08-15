@@ -85,7 +85,12 @@ function App() {
             </p>
           </div>
 
-          <LogoMark loop />
+          <LogoMark
+            loop={isMobile}
+            onComplete={() =>
+              setNav((n) => (n.view === 'closed' ? { view: 'gallery', activeKey: null } : n))
+            }
+          />
 
           {/* title + description — mobile only, shown below the mark and
               above the footer nav */}

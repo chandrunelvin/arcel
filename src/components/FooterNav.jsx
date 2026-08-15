@@ -26,7 +26,7 @@ export default function FooterNav({ onSelect, activeKey }) {
                   : undefined
               }
             >
-              <CardContent className="mx-auto flex h-full w-full max-w-[719px] items-center justify-center gap-4 p-0 px-6 sm:justify-between">
+              <CardContent className="mx-auto flex h-full w-full max-w-[719px] flex-col items-center justify-center gap-1 p-0 px-2 sm:flex-row sm:justify-between sm:gap-4 sm:px-6">
                 <div className="hidden min-w-0 flex-1 flex-col items-start gap-0.5 whitespace-normal sm:flex">
                   <p
                     className="font-sans text-[clamp(9px,0.55vw,12px)] font-normal leading-[clamp(13px,0.75vw,16px)]"
@@ -47,6 +47,12 @@ export default function FooterNav({ onSelect, activeKey }) {
                     src={sense.icon}
                   />
                 </div>
+                <p
+                  className="font-sans text-[10px] font-normal leading-none sm:hidden"
+                  style={{ color: isActive ? sense.accent : "#fff" }}
+                >
+                  {sense.element}
+                </p>
               </CardContent>
             </Card>
           </Button>
