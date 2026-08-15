@@ -140,14 +140,13 @@ body,
 /* Keyframe travels 100vw + the element's own width, so a fixed duration
    would make the ticker visibly race on wide screens vs. narrow ones.
    Duration is computed per breakpoint (matching the h-6/h-8 image size)
-   to hold a constant ~49.36px/s — the speed the original 14s felt right
-   at on a ~375px phone — so mobile, laptop, and desktop all move the
-   same speed. */
+   to hold a constant ~158px/s — so mobile, laptop, and desktop all move
+   the same (fast) speed. */
 .animate-marquee-once {
   animation-name: marquee-once;
   animation-timing-function: linear;
   animation-iteration-count: infinite;
-  animation-duration: calc((100vw + 316px) / 1px * 0.020261s);
+  animation-duration: calc((100vw + 316px) / 1px * 0.00633s);
 }
 
 @media (min-width: 640px) {
@@ -155,8 +154,8 @@ body,
     animation-name: marquee-once-desktop;
     /* travel is 80px shorter than the mobile keyframe (see above), so the
        constant subtracted here is 422px - 80px = 342px to hold the same
-       ~49.36px/s speed */
-    animation-duration: calc((100vw + 342px) / 1px * 0.020261s);
+       ~158px/s speed */
+    animation-duration: calc((100vw + 342px) / 1px * 0.00633s);
   }
 }
 
