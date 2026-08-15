@@ -1,4 +1,4 @@
-import { useEffect, useState } from 'react'
+import { useEffect, useRef, useState } from 'react'
 import { senses } from '../data/senses'
 import { countries } from '../data/countries'
 
@@ -39,6 +39,95 @@ function Select({ children, className = '', ...props }) {
       >
         <path d="M6 10l6-6 6 6M6 14l6 6 6-6" strokeLinecap="round" strokeLinejoin="round" />
       </svg>
+    </div>
+  )
+}
+
+// Searchable dropdown for long lists (country / phone code) — a plain
+// <select> has no built-in search and, being native, can't have its list
+// styled or its scroll contained, so it's swapped for this custom popover.
+// `overscroll-contain` on the scrollable list stops scrolling within it
+// from chaining up to the page once the list hits its own top/bottom edge.
+function Combobox({
+  name,
+  options,
+  getLabel,
+  getValue,
+  getKey = getValue,
+  renderOption,
+  placeholder = 'Select one',
+  className = '',
+}) {
+  const [open, setOpen] = useState(false)
+  const [query, setQuery] = useState('')
+  const [selectedKey, setSelectedKey] = useState('')
+  const rootRef = useRef(null)
+
+  useEffect(() => {
+    if (!open) return
+    const onPointerDown = (e) => {
+      if (rootRef.current && !rootRef.current.contains(e.target)) setOpen(false)
+    }
+    document.addEventListener('mousedown', onPointerDown)
+    return () => document.removeEventListener('mousedown', onPointerDown)
+  }, [open])
+
+  const filtered = options.filter((opt) => getLabel(opt).toLowerCase().includes(query.trim().toLowerCase()))
+  const selected = options.find((opt) => getKey(opt) === selectedKey)
+
+  return (
+    <div ref={rootRef} className="relative">
+      <input type="hidden" name={name} value={selected ? getValue(selected) : ''} />
+      <button
+        type="button"
+        onClick={() => setOpen((o) => !o)}
+        className={`${inputClass} flex items-center justify-between text-left ${className}`}
+      >
+        <span className={`truncate ${selected ? '' : 'text-white/30'}`}>
+          {selected ? renderOption(selected) : placeholder}
+        </span>
+        <svg
+          viewBox="0 0 24 24"
+          className="h-3.5 w-3.5 shrink-0 text-white/50"
+          fill="none"
+          stroke="currentColor"
+          strokeWidth="1.8"
+        >
+          <path d="M6 10l6-6 6 6M6 14l6 6 6-6" strokeLinecap="round" strokeLinejoin="round" />
+        </svg>
+      </button>
+
+      {open && (
+        <div className="absolute z-20 mt-1 w-full border border-white/15 bg-[#0a0a0a] shadow-xl">
+          <input
+            autoFocus
+            type="text"
+            value={query}
+            onChange={(e) => setQuery(e.target.value)}
+            placeholder="Search…"
+            className="w-full border-b border-white/10 bg-transparent px-4 py-2.5 font-roboto text-sm text-white placeholder:text-white/30 outline-none"
+          />
+          <div className="max-h-56 overscroll-contain overflow-y-auto">
+            {filtered.length === 0 && (
+              <p className="px-4 py-2.5 font-roboto text-sm text-white/40">No matches</p>
+            )}
+            {filtered.map((opt) => (
+              <button
+                key={getKey(opt)}
+                type="button"
+                onClick={() => {
+                  setSelectedKey(getKey(opt))
+                  setQuery('')
+                  setOpen(false)
+                }}
+                className="flex w-full items-center gap-2 px-4 py-2.5 text-left font-roboto text-sm text-white hover:bg-white/5"
+              >
+                {renderOption(opt)}
+              </button>
+            ))}
+          </div>
+        </div>
+      )}
     </div>
   )
 }
@@ -156,28 +245,27 @@ export default function SignUpForm({ open, onClose }) {
             <input type="email" name="email" className={inputClass} />
           </Field>
           <Field label="Country">
-            <Select name="country">
-              <option value="" disabled>
-                Select one
-              </option>
-              {countries.map(({ flag, name }) => (
-                <option key={name} value={name}>
-                  {flag} {name}
-                </option>
-              ))}
-            </Select>
+            <Combobox
+              name="country"
+              options={countries}
+              getLabel={(c) => c.name}
+              getValue={(c) => c.name}
+              renderOption={(c) => `${c.flag} ${c.name}`}
+            />
           </Field>
 
           <div className="sm:col-span-2">
             <Field label="Phone">
               <div className="flex gap-2">
-                <Select name="phoneCode" className="w-[120px] shrink-0 pr-8">
-                  {phoneCodes.map(({ flag, code, dial }) => (
-                    <option key={code} value={dial}>
-                      {flag} {code} {dial}
-                    </option>
-                  ))}
-                </Select>
+                <Combobox
+                  name="phoneCode"
+                  className="w-[140px] shrink-0"
+                  options={phoneCodes}
+                  getLabel={(c) => `${c.name} ${c.code} ${c.dial}`}
+                  getValue={(c) => c.dial}
+                  getKey={(c) => c.code}
+                  renderOption={(c) => `${c.flag} ${c.dial}`}
+                />
                 <input type="tel" name="phone" className={inputClass} />
               </div>
             </Field>
