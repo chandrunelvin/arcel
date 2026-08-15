@@ -1,22 +1,53 @@
-import movingText from '../assets/images/header-image/moving-text-05.png'
+import { useMemo } from 'react'
 
-// LED/dot-matrix style ticker, e.g. "LAUNCHING · 15 · OCTOBER" — rendered
-// as a repeating background strip so it can scroll endlessly without the
-// visible handoff artifacts of moving discrete <img> elements.
-export default function Marquee({ text = 'LAUNCHING 15 OCTOBER' }) {
+// Countdown target — change here if the launch date ever moves.
+const LAUNCH_DATE = new Date('2026-10-15T00:00:00')
+
+function useDaysToGo() {
+  return useMemo(() => {
+    const diffMs = LAUNCH_DATE.getTime() - Date.now()
+    return Math.max(0, Math.ceil(diffMs / (1000 * 60 * 60 * 24)))
+  }, [])
+}
+
+// LED-style ticker — real text (not a baked image) so the rotating set of
+// messages, including the live day countdown, can actually change. Two
+// identical copies of the message list sit side by side in a `w-max` flex
+// row that translates by exactly -50%, so the loop point is seamless
+// regardless of how long the messages end up being. Each message is its
+// own element with a fixed right margin for spacing, rather than a joined
+// string with a separator character between words.
+export default function Marquee() {
+  const daysToGo = useDaysToGo()
+
+  const messages = [
+    'LAUNCHING 05 OCT 2026',
+    'KONNECT',
+    'VAULT',
+    'AND MUCH MORE',
+    'AEC + RE',
+    `${daysToGo} MORE DAYS TO GO`,
+    'GLOBAL YET LOCAL',
+  ]
+
+  const renderMessages = (hidden) =>
+    messages.map((message, i) => (
+      <span key={i} className="mr-12" aria-hidden={hidden || undefined}>
+        {message}
+      </span>
+    ))
+
   return (
     <div className="relative h-6 w-full overflow-hidden sm:h-8">
       <div
-        aria-label={text}
         role="img"
-        className="animate-marquee-background h-full w-[200%]"
-        style={{
-          backgroundImage: `url(${movingText})`,
-          backgroundRepeat: 'repeat-x',
-          backgroundPosition: '0 50%',
-          backgroundSize: 'auto 100%',
-        }}
-      />
+        aria-label={messages.join(', ')}
+        className="animate-marquee-text flex h-full w-max items-center whitespace-nowrap font-mono text-sm font-semibold uppercase tracking-[0.18em] sm:text-base"
+        style={{ color: 'var(--ether-strong)', textShadow: '0 0 6px rgba(8,222,115,0.65)' }}
+      >
+        {renderMessages(false)}
+        {renderMessages(true)}
+      </div>
     </div>
   )
 }

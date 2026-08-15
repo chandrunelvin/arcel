@@ -285,7 +285,7 @@ export default function SenseGallery({
                 key={`mark-${expanding.key}`}
                 src={expanding.sense.centerImage}
                 alt={`${expanding.sense.element} — ${expanding.sense.title}`}
-                className={expanding.active ? 'animate-spin-once relative w-[65%]' : 'relative w-[65%]'}
+                className={expanding.active ? 'animate-spin-once-slow relative w-[65%]' : 'relative w-[65%]'}
               />
             </div>
 
