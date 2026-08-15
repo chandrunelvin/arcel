@@ -1,4 +1,5 @@
 import { useMemo } from 'react'
+import DotMatrixText from './DotMatrixText'
 
 // Countdown target — change here if the launch date ever moves.
 const LAUNCH_DATE = new Date('2026-10-15T00:00:00')
@@ -32,9 +33,7 @@ export default function Marquee() {
 
   const renderMessages = (hidden) =>
     messages.map((message, i) => (
-      <span key={i} className="mr-12" aria-hidden={hidden || undefined}>
-        {message}
-      </span>
+      <DotMatrixText key={i} text={message} className="mr-12" aria-hidden={hidden || undefined} />
     ))
 
   return (
@@ -42,8 +41,7 @@ export default function Marquee() {
       <div
         role="img"
         aria-label={messages.join(', ')}
-        className="animate-marquee-text flex h-full w-max items-center whitespace-nowrap font-mono text-sm font-semibold uppercase tracking-[0.18em] sm:text-base"
-        style={{ color: 'var(--ether-strong)', textShadow: '0 0 6px rgba(8,222,115,0.65)' }}
+        className="animate-marquee-text flex h-full w-max items-center whitespace-nowrap text-2xl sm:text-[32px]"
       >
         {renderMessages(false)}
         {renderMessages(true)}
