@@ -112,51 +112,20 @@ body,
   box-sizing: border-box;
 }
 
-/* Continuous ticker pass for the "LAUNCHING 15 OCTOBER" banner —
-   a single copy of the text loops from off-screen right to off-screen left. */
-@keyframes marquee-once {
+/* Repeating-background ticker: the image is tiled horizontally and the
+   background offset is animated, which gives a true endless rollover. */
+@keyframes marquee-background {
   from {
-    transform: translateX(100vw);
+    background-position-x: 0;
   }
   to {
-    transform: translateX(-100%);
+    background-position-x: -1121px;
   }
 }
 
-/* Desktop-only variant: the ticker strip carries `sm:px-10` (80px total)
-   side padding, but `100vw` ignores that padding and starts the image a
-   full extra 80px past the strip's actual right edge — ~1.6s of "dead"
-   travel before it's visible. Starting from `100vw - 80px` lines the start
-   up with the padded container's edge instead, so it appears right away. */
-@keyframes marquee-once-desktop {
-  from {
-    transform: translateX(calc(100vw - 80px));
-  }
-  to {
-    transform: translateX(-100%);
-  }
-}
-
-/* Keyframe travels 100vw + the element's own width, so a fixed duration
-   would make the ticker visibly race on wide screens vs. narrow ones.
-   Duration is computed per breakpoint (matching the h-6/h-8 image size)
-   to hold a constant ~158px/s — so mobile, laptop, and desktop all move
-   the same (fast) speed. */
-.animate-marquee-once {
-  animation-name: marquee-once;
-  animation-timing-function: linear;
-  animation-iteration-count: infinite;
-  animation-duration: calc((100vw + 316px) / 1px * 0.00633s);
-}
-
-@media (min-width: 640px) {
-  .animate-marquee-once {
-    animation-name: marquee-once-desktop;
-    /* travel is 80px shorter than the mobile keyframe (see above), so the
-       constant subtracted here is 422px - 80px = 342px to hold the same
-       ~158px/s speed */
-    animation-duration: calc((100vw + 342px) / 1px * 0.00633s);
-  }
+.animate-marquee-background {
+  animation: marquee-background 10s linear infinite;
+  will-change: background-position;
 }
 
 /* Slow rotation for the radar ring around the logo mark */
@@ -194,6 +163,13 @@ body,
   will-change: transform;
 }
 
+.animate-spin-once-slow {
+  animation: spin-once 3.6s cubic-bezier(0.16, 1, 0.3, 1);
+  backface-visibility: hidden;
+  transform-style: preserve-3d;
+  will-change: transform;
+}
+
 /* Gentle pulsing glow used behind the hero logo mark */
 @keyframes pulse-glow {
   0%,
@@ -225,7 +201,7 @@ body,
 
 .animate-panel-in {
   opacity: 0;
-  animation: panel-in 0.6s cubic-bezier(0.16, 1, 0.3, 1) forwards;
+  animation: panel-in 0.85s cubic-bezier(0.16, 1, 0.3, 1) forwards;
 }
 
 /* Backdrop fade for the gallery overlay itself */
@@ -239,7 +215,41 @@ body,
 }
 
 .animate-overlay-fade {
-  animation: overlay-fade 0.6s ease-out forwards;
+  animation: overlay-fade 0.8s cubic-bezier(0.22, 0.61, 0.36, 1) forwards;
+}
+
+@keyframes detail-bg-in {
+  from {
+    opacity: 0;
+    transform: scale(1.035);
+  }
+  to {
+    opacity: 1;
+    transform: scale(1);
+  }
+}
+
+.animate-detail-bg-in {
+  opacity: 0;
+  animation: detail-bg-in 1.3s cubic-bezier(0.16, 1, 0.3, 1) forwards;
+  will-change: transform, opacity;
+}
+
+@keyframes detail-content-in {
+  from {
+    opacity: 0;
+    transform: translateY(24px) scale(0.985);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0) scale(1);
+  }
+}
+
+.animate-detail-content-in {
+  opacity: 0;
+  animation: detail-content-in 1.15s cubic-bezier(0.16, 1, 0.3, 1) 260ms forwards;
+  will-change: transform, opacity;
 }
 
 /* Home hero crossfade — title/description/bg image change in sync with

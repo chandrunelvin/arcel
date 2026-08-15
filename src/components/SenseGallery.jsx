@@ -201,7 +201,11 @@ export default function SenseGallery({ open, onClose, onSelect, hideTiles = fals
             width: expanding.active ? expanding.targetRect.width : expanding.rect.width,
             height: expanding.active ? expanding.targetRect.height : expanding.rect.height,
             transition:
-              'top 420ms cubic-bezier(.4,0,.2,1), left 420ms cubic-bezier(.4,0,.2,1), width 420ms cubic-bezier(.4,0,.2,1), height 420ms cubic-bezier(.4,0,.2,1)',
+              'top 760ms cubic-bezier(.16,1,.3,1), left 760ms cubic-bezier(.16,1,.3,1), width 760ms cubic-bezier(.16,1,.3,1), height 760ms cubic-bezier(.16,1,.3,1), transform 760ms cubic-bezier(.16,1,.3,1), opacity 520ms ease-out',
+            transform: expanding.active ? 'scale(1)' : 'scale(0.985)',
+            opacity: expanding.active ? 1 : 0.92,
+            transformOrigin: 'center center',
+            willChange: 'top, left, width, height, transform, opacity',
           }}
           onTransitionEnd={(e) => {
             if (e.propertyName !== 'width') return
@@ -224,8 +228,8 @@ export default function SenseGallery({ open, onClose, onSelect, hideTiles = fals
             type="button"
             onClick={handleCollapse}
             aria-label="Back to overview"
-            className="absolute left-5 top-5 z-10 hidden h-10 w-10 items-center justify-center rounded-full bg-white/10 text-white backdrop-blur transition-opacity duration-300 hover:bg-white/20 sm:flex"
-            style={{ opacity: expanding.active ? 1 : 0, transitionDelay: expanding.active ? '250ms' : '0ms' }}
+            className="absolute left-5 top-5 z-10 hidden h-10 w-10 items-center justify-center rounded-full bg-white/10 text-white backdrop-blur transition-opacity duration-500 hover:bg-white/20 sm:flex"
+            style={{ opacity: expanding.active ? 1 : 0, transitionDelay: expanding.active ? '460ms' : '0ms' }}
           >
             <svg viewBox="0 0 24 24" className="h-5 w-5" fill="none" stroke="currentColor" strokeWidth="1.8">
               <path d="M15 6l-6 6 6 6" strokeLinecap="round" strokeLinejoin="round" />
@@ -234,8 +238,8 @@ export default function SenseGallery({ open, onClose, onSelect, hideTiles = fals
 
           {/* right description — same as SenseDetail: desktop/tablet only */}
           <div
-            className="pointer-events-none absolute right-6 top-1/2 hidden max-w-[280px] -translate-y-1/2 text-right font-roboto text-[13px] leading-relaxed text-white/70 transition-opacity duration-300 sm:block sm:right-14"
-            style={{ opacity: expanding.active ? 1 : 0, transitionDelay: expanding.active ? '250ms' : '0ms' }}
+            className="pointer-events-none absolute right-6 top-1/2 hidden max-w-[360px] -translate-y-1/2 text-right font-roboto text-base leading-7 text-white/92 transition-opacity duration-500 sm:block sm:right-14"
+            style={{ opacity: expanding.active ? 1 : 0, transitionDelay: expanding.active ? '460ms' : '0ms' }}
           >
             {expanding.sense.description}
           </div>
@@ -244,13 +248,17 @@ export default function SenseGallery({ open, onClose, onSelect, hideTiles = fals
               title/description below the mark on mobile */}
           <div
             key={expanding.key}
-            className="relative flex flex-1 flex-col items-center justify-center gap-6 px-6 transition-opacity duration-300 sm:flex-row sm:justify-center sm:gap-0"
-            style={{ opacity: expanding.active ? 1 : 0, transitionDelay: expanding.active ? '250ms' : '0ms' }}
+            className="relative flex flex-1 flex-col items-center justify-center gap-6 px-6 transition-[opacity,transform] duration-700 sm:flex-row sm:justify-center sm:gap-0"
+            style={{
+              opacity: expanding.active ? 1 : 0,
+              transform: expanding.active ? 'translateY(0)' : 'translateY(16px)',
+              transitionDelay: expanding.active ? '460ms' : '0ms',
+            }}
           >
             {/* left label — desktop/tablet only */}
             <div className="absolute left-6 top-1/2 hidden -translate-y-1/2 text-left sm:block sm:left-14 md:left-24">
               <h1
-                className="font-heading text-[clamp(20px,1.8vw,34px)] font-semibold leading-tight tracking-[-0.32px] text-white"
+                className="font-heading text-2xl font-semibold leading-tight tracking-[-0.32px] text-white sm:text-3xl"
               >
                 {expanding.sense.title}
               </h1>
@@ -258,7 +266,7 @@ export default function SenseGallery({ open, onClose, onSelect, hideTiles = fals
                 element={expanding.sense.element}
                 sense={expanding.sense.sense}
                 accent={expanding.sense.accent}
-                className="mt-[15px] font-roboto text-[10px] font-normal uppercase tracking-[0.2em]"
+                className="mt-[15px] font-roboto text-xs font-normal leading-[16px] uppercase tracking-[0.2em]"
               />
             </div>
 
@@ -273,9 +281,9 @@ export default function SenseGallery({ open, onClose, onSelect, hideTiles = fals
             </div>
 
             {/* title + description — mobile only, shown below the mark */}
-            <div className="flex max-w-xs flex-col items-center gap-3 text-center sm:hidden">
+            <div className="flex max-w-[17rem] flex-col items-center gap-2 text-center sm:hidden">
               <h1
-                className="font-heading text-2xl font-semibold leading-tight tracking-[-0.32px] text-white"
+                className="font-heading text-[1.35rem] font-semibold leading-tight tracking-[-0.32px] text-white"
               >
                 {expanding.sense.title}
               </h1>
@@ -283,9 +291,9 @@ export default function SenseGallery({ open, onClose, onSelect, hideTiles = fals
                 element={expanding.sense.element}
                 sense={expanding.sense.sense}
                 accent={expanding.sense.accent}
-                className="font-roboto text-[11px] font-normal uppercase tracking-[0.2em]"
+                className="font-roboto text-[11px] font-normal uppercase tracking-[0.18em]"
               />
-              <p className="font-roboto text-xs leading-relaxed text-white/70">
+              <p className="font-roboto text-[12px] leading-5 text-white/88">
                 {expanding.sense.description}
               </p>
             </div>

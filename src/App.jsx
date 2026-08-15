@@ -93,7 +93,7 @@ function App() {
   const footerSense = senses[Math.min(Math.max(beatIndex, 0), senses.length - 1)]
 
   return (
-    <div className="flex min-h-screen flex-col bg-black sm:h-screen sm:overflow-hidden">
+    <div className="flex h-[100svh] flex-col overflow-hidden bg-black">
       <TopNav />
 
       {/* blue ticker strip */}
@@ -104,7 +104,7 @@ function App() {
       {/* hero — on mobile this is allowed to grow with the extra title/
           description text below the mark (page scrolls naturally); on
           sm+ it stays clamped to the available space like before */}
-      <main className="relative flex flex-1 flex-col overflow-visible bg-[#050505] sm:min-h-0 sm:overflow-hidden">
+      <main className="relative flex min-h-0 flex-1 flex-col overflow-hidden bg-[#050505]">
         {/* real hero photo: Dubai skyline + architectural wireframe overlay
             (already carries the "Digital Twin", "Smart City OS" and
             "Architecture Intelligence" callouts baked into the image) */}
@@ -142,7 +142,7 @@ function App() {
         {/* center content — stacked (mark, then title/description) on
             mobile since there's no room for the absolute side text there;
             centered mark only on sm+, with the absolute side text back */}
-        <div className="relative flex flex-1 flex-col items-center justify-center gap-6 px-6 py-6 sm:min-h-0 sm:py-10">
+        <div className="relative flex min-h-0 flex-1 flex-col items-center justify-center gap-4 px-5 py-4 sm:gap-6 sm:px-6 sm:py-10">
           {/* left label — desktop/tablet only */}
           <div className="absolute left-6 top-1/2 hidden -translate-y-1/2 text-left sm:block sm:left-14 md:left-24">
             <div key={homeSense.key} className="animate-hero-fade">
@@ -188,25 +188,25 @@ function App() {
               above the footer nav */}
           <div
             key={homeSense.key}
-            className="animate-hero-fade flex max-w-sm flex-col items-center gap-3 text-center sm:hidden"
+            className="animate-hero-fade flex max-w-[17rem] flex-col items-center gap-2 text-center sm:hidden"
           >
             <h1
-              className="font-heading text-2xl font-semibold leading-tight tracking-[-0.32px] text-white"
+              className="font-heading text-[1.35rem] font-semibold leading-tight tracking-[-0.32px] text-white"
             >
               {homeSense.title}
             </h1>
             {isFinale ? (
-              <p className="font-roboto text-sm font-normal uppercase tracking-[0.2em] text-white/70">
+              <p className="font-roboto text-[11px] font-normal uppercase tracking-[0.18em] text-white/70">
                 {homeSense.label}
               </p>
             ) : (
-              <p className="font-roboto text-sm font-normal uppercase tracking-[0.2em]">
+              <p className="font-roboto text-[11px] font-normal uppercase tracking-[0.18em]">
                 <span className="text-white/70">Intelligence / </span>
                 <span style={{ color: homeSense.accent }}>{homeSense.element.toUpperCase()}</span>
                 <span className="text-white/70"> · {homeSense.sense}</span>
               </p>
             )}
-            <p className="font-roboto text-sm leading-6 text-white/88">
+            <p className="font-roboto text-[12px] leading-5 text-white/88">
               {homeSense.description}
             </p>
           </div>
@@ -220,7 +220,7 @@ function App() {
           so it's always shown in full instead of trailing off past the
           fold when the hero's extra title/description text pushes the
           page taller than the viewport. */}
-      <div className="sticky bottom-0 z-20 sm:static">
+      <div className="z-20">
         <FooterNav
           activeKey={nav.view === 'closed' ? (isFinale ? null : footerSense.key) : nav.activeKey}
           rotationMs={nav.view === 'closed' && !isFinale ? BEAT_MS : undefined}

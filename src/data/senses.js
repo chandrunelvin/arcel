@@ -46,7 +46,7 @@ export const senses = [
     bg: airBg,
     accent: "#8b5cf6",
     description:
-      "Listening for what a place needs to become, then shaping it with data-driven design, engineering rigor, and creative clarity so concepts turn buildable, efficient, and enduring.",
+      "The built environment is perceived through five senses, five faculties, each grasping one part of the whole. ARCEL is the sixth, the mind that coordinates them.",
   },
   {
     key: "fire",
@@ -58,7 +58,7 @@ export const senses = [
     bg: fireBg,
     accent: "#ef4444",
     description:
-      "Forging vision into structure with disciplined execution — sequencing, safety, and quality intelligence so delivery stays precise, accountable, and on time.",
+      "Powering execution on site with real-time insight, workflows, and resources that turn plans into safe, controlled, coordinated, accountable, precise, efficient action instead of chaos.",
   },
   {
     key: "water",
@@ -70,7 +70,7 @@ export const senses = [
     bg: waterBg,
     accent: "#22d3ee",
     description:
-      "Keeping every system flowing — performance data, maintenance intelligence, and adaptive control so buildings run efficiently, sustainably, and without friction.",
+      "Sustaining assets over time by flowing intelligence through operations, maintenance, and performance so buildings stay alive, efficient, and responsive.",
   },
   {
     key: "ether",
@@ -82,6 +82,6 @@ export const senses = [
     bg: etherBg,
     accent: "#7ae3a9",
     description:
-      "The intelligence that binds every discipline together — connecting people, data, and process so the built environment thinks, learns, and evolves as one.",
+      "Expanding the practice of AEC itself—careers, firms, methods, and culture—by sharing frameworks, language, and pathways across the ecosystem.",
   },
 ];

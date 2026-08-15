@@ -38,13 +38,13 @@ export default function SenseDetail({ open, activeKey, onSelect, onBack, onClose
   const sense = senses.find((s) => s.key === activeKey) ?? senses[0]
 
   return (
-    <div ref={scrollRef} className="animate-overlay-fade fixed inset-0 z-50 flex flex-col overflow-y-auto bg-black">
+    <div ref={scrollRef} className="animate-overlay-fade fixed inset-0 z-50 flex flex-col overflow-hidden bg-black">
       <TopNav />
       <div className="flex items-center px-6 py-3 sm:px-10" style={{ background: '#191BDF' }}>
         <Marquee />
       </div>
 
-      <main key={sense.key} className="animate-panel-in relative flex flex-1 flex-col sm:min-h-0">
+      <main key={sense.key} className="relative flex min-h-0 flex-1 flex-col overflow-hidden">
         {/* back to gallery / close to home */}
         <button
           type="button"
@@ -60,19 +60,19 @@ export default function SenseDetail({ open, activeKey, onSelect, onBack, onClose
         {/* per-sense photo — swap the file in src/assets/images/senses/ to update */}
         <div className="pointer-events-none absolute inset-0">
           <div
-            className="absolute inset-0 bg-cover bg-center"
+            className="animate-detail-bg-in absolute inset-0 bg-cover bg-center"
             style={{ backgroundImage: `url(${sense.bg})` }}
           />
-          <div className="absolute inset-0" style={{ background: '#00000099' }} />
+          <div className="animate-detail-bg-in absolute inset-0" style={{ background: '#00000099' }} />
           <img
             src={heroGridOverlay}
             alt=""
-            className="absolute inset-0 h-full w-full object-cover opacity-30"
+            className="animate-detail-bg-in absolute inset-0 h-full w-full object-cover opacity-30"
           />
         </div>
 
         {/* right description */}
-        <div className="pointer-events-none absolute right-6 top-1/2 hidden max-w-[280px] -translate-y-1/2 text-right font-roboto text-[13px] leading-relaxed text-white/70 sm:block sm:right-14">
+        <div className="animate-detail-content-in pointer-events-none absolute right-6 top-1/2 hidden max-w-[360px] -translate-y-1/2 text-right font-roboto text-base leading-7 text-white/92 sm:block sm:right-14">
           {sense.description}
         </div>
 
@@ -84,11 +84,11 @@ export default function SenseDetail({ open, activeKey, onSelect, onBack, onClose
             before the peek bar, which is where it's expected to be.
             Side-by-side + vertically centered with the absolute left/right
             text on sm+, unchanged. */}
-        <div className="relative flex flex-1 flex-col items-center justify-start gap-6 px-6 pb-10 pt-20 sm:flex-row sm:justify-center sm:gap-0 sm:py-16 sm:py-24">
+        <div className="animate-detail-content-in relative flex min-h-0 flex-1 flex-col items-center justify-center gap-4 px-5 py-6 sm:flex-row sm:justify-center sm:gap-0 sm:px-6 sm:py-16">
           {/* left label — desktop/tablet only */}
           <div className="absolute left-6 top-1/2 hidden -translate-y-1/2 text-left sm:block sm:left-14 md:left-24">
             <h1
-              className="font-heading text-[clamp(20px,1.8vw,34px)] font-semibold leading-tight tracking-[-0.32px] text-white"
+              className="font-heading text-2xl font-semibold leading-tight tracking-[-0.32px] text-white sm:text-3xl"
             >
               {sense.title}
             </h1>
@@ -96,25 +96,25 @@ export default function SenseDetail({ open, activeKey, onSelect, onBack, onClose
               element={sense.element}
               sense={sense.sense}
               accent={sense.accent}
-              className="mt-[15px] font-roboto text-[10px] font-normal uppercase tracking-[0.2em]"
+              className="mt-[15px] font-roboto text-xs font-normal leading-[16px] uppercase tracking-[0.2em]"
             />
           </div>
 
           {/* center mark */}
-          <div className="relative flex h-[220px] w-[220px] shrink-0 items-center justify-center sm:h-[380px] sm:w-[380px]">
+          <div className="relative flex h-[180px] w-[180px] shrink-0 items-center justify-center sm:h-[380px] sm:w-[380px]">
             <img
               key={`mark-${sense.key}`}
               src={sense.centerImage}
               alt={`${sense.element} — ${sense.title}`}
-              className="animate-spin-once relative w-[65%]"
+              className="animate-spin-once-slow relative w-[65%]"
             />
           </div>
 
           {/* title + description — mobile only, shown below the mark and
               above the footer nav */}
-          <div className="flex max-w-xs flex-col items-center gap-3 text-center sm:hidden">
+          <div className="flex max-w-[17rem] flex-col items-center gap-2 text-center sm:hidden">
             <h1
-              className="font-heading text-2xl font-semibold leading-tight tracking-[-0.32px] text-white"
+              className="font-heading text-[1.35rem] font-semibold leading-tight tracking-[-0.32px] text-white"
             >
               {sense.title}
             </h1>
@@ -122,9 +122,9 @@ export default function SenseDetail({ open, activeKey, onSelect, onBack, onClose
               element={sense.element}
               sense={sense.sense}
               accent={sense.accent}
-              className="font-roboto text-[11px] font-normal uppercase tracking-[0.2em]"
+              className="font-roboto text-[11px] font-normal uppercase tracking-[0.18em]"
             />
-            <p className="font-roboto text-xs leading-relaxed text-white/70">
+            <p className="font-roboto text-[12px] leading-5 text-white/88">
               {sense.description}
             </p>
           </div>
@@ -133,7 +133,7 @@ export default function SenseDetail({ open, activeKey, onSelect, onBack, onClose
 
       {/* sticky at the bottom on mobile so it's always visible without
           scrolling; sits in normal flow on sm+ like before */}
-      <div className="sticky bottom-0 z-20 sm:static">
+      <div className="z-20">
         <FooterNav activeKey={sense.key} onSelect={onSelect} />
       </div>
     </div>
