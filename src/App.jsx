@@ -6,8 +6,8 @@ import SenseGallery from './components/SenseGallery'
 import SenseDetail from './components/SenseDetail'
 import FlywheelMark from './components/FlywheelMark'
 import heroGridOverlay from './assets/hero-grid-overlay.svg'
-import intelligenceBg from './assets/images/senses/intelligence-image-bg.webp'
-import { senses } from './data/senses'
+import { getFinale, getSenses } from './data/senses'
+import { getUiCopy } from './data/uiCopy'
 
 // Mirrors the Tailwind `sm` breakpoint used everywhere else in this app.
 const MOBILE_QUERY = '(max-width: 639px)'
@@ -37,22 +37,22 @@ const BEATS = 6
 
 // Sixth beat's content — the flywheel's own "brand" wedge — shown once the
 // five senses have each had their turn, right before the gallery opens.
-const FINALE = {
-  key: 'intelligence',
-  title: 'ARCEL Intelligence',
-  label: 'THE SIX SENSES',
-  description:
-    'The built environment is perceived through five senses, five faculties, each grasping one part of the whole. ARCEL is the sixth, the mind that coordinates them.',
-  bg: intelligenceBg,
-}
-
 function App() {
   // view: 'closed' | 'gallery' | 'detail'
   const [nav, setNav] = useState({ view: 'closed', activeKey: null })
   // -1 = "not started yet": the mark sits fully unfilled for one frame so
   // wedge 0 visibly wipes in on load/return instead of appearing pre-filled
   const [beatIndex, setBeatIndex] = useState(-1)
+  const [language, setLanguage] = useState('en')
   const isMobile = useIsMobile()
+  const senses = getSenses(language)
+  const copy = getUiCopy(language)
+  const FINALE = getFinale(language)
+
+  useEffect(() => {
+    document.documentElement.lang = copy.locale
+    document.documentElement.dir = copy.dir
+  }, [copy.dir, copy.locale])
 
   // advance one wedge at a time, in sync with the flywheel's own timing,
   // for as long as we're sitting on the home view. The -1 -> 0 kickoff is
@@ -94,8 +94,7 @@ function App() {
 
   return (
     <div className="flex h-[100svh] flex-col overflow-hidden bg-black">
-      <TopNav />
-
+      <TopNav language={language} copy={copy} onLanguageChange={setLanguage} />
       {/* blue ticker strip */}
       <div className="flex items-center px-6 py-3 sm:px-10" style={{ background: '#191BDF' }}>
         <Marquee />
@@ -157,9 +156,9 @@ function App() {
                 </p>
               ) : (
                 <p className="mt-[15px] font-roboto text-xs font-normal leading-[16px] uppercase tracking-[0.2em]">
-                  <span className="text-white">Intelligence / </span>
+                  <span className="text-white">{copy.intelligencePrefix}</span>
                   <span style={{ color: homeSense.accent }}>{homeSense.element.toUpperCase()}</span>
-                  <span className="text-white"> · {homeSense.sense}</span>
+                  <span className="text-white">{copy.subtitleJoiner}{homeSense.sense}</span>
                 </p>
               )}
             </div>
@@ -201,9 +200,9 @@ function App() {
               </p>
             ) : (
               <p className="font-roboto text-[11px] font-normal uppercase tracking-[0.18em]">
-                <span className="text-white/70">Intelligence / </span>
+                <span className="text-white/70">{copy.intelligencePrefix}</span>
                 <span style={{ color: homeSense.accent }}>{homeSense.element.toUpperCase()}</span>
-                <span className="text-white/70"> · {homeSense.sense}</span>
+                <span className="text-white/70">{copy.subtitleJoiner}{homeSense.sense}</span>
               </p>
             )}
             <p className="font-roboto text-[12px] leading-5 text-white/88">
@@ -222,6 +221,8 @@ function App() {
           page taller than the viewport. */}
       <div className="z-20">
         <FooterNav
+          copy={copy}
+          senses={senses}
           activeKey={nav.view === 'closed' ? (isFinale ? null : footerSense.key) : nav.activeKey}
           rotationMs={nav.view === 'closed' && !isFinale ? BEAT_MS : undefined}
           onSelect={(key) => setNav({ view: isMobile ? 'detail' : 'gallery', activeKey: key })}
@@ -229,6 +230,10 @@ function App() {
       </div>
 
       <SenseGallery
+        language={language}
+        copy={copy}
+        senses={senses}
+        onLanguageChange={setLanguage}
         open={nav.view === 'gallery'}
         hideTiles={isMobile}
         onSelect={(key) => setNav({ view: 'detail', activeKey: key })}
@@ -236,6 +241,10 @@ function App() {
       />
 
       <SenseDetail
+        copy={copy}
+        senses={senses}
+        language={language}
+        onLanguageChange={setLanguage}
         open={nav.view === 'detail'}
         activeKey={nav.activeKey}
         onSelect={(key) => setNav({ view: 'detail', activeKey: key })}

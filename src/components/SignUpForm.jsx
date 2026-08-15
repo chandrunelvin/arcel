@@ -1,5 +1,5 @@
 import { useEffect, useRef, useState } from 'react'
-import { senses } from '../data/senses'
+import { getSenses } from '../data/senses'
 import { countries } from '../data/countries'
 import arcelKonnectLogo from '../assets/Arcel-Konnect-form-logo.png'
 import konnectMovingImage from '../assets/images/form-image/kannet-image2.svg'
@@ -58,6 +58,8 @@ function Combobox({
   getKey = getValue,
   renderOption,
   placeholder = 'Select one',
+  searchPlaceholder = 'Search…',
+  noMatchesLabel = 'No matches',
   className = '',
   resetSignal,
 }) {
@@ -113,12 +115,12 @@ function Combobox({
             type="text"
             value={query}
             onChange={(e) => setQuery(e.target.value)}
-            placeholder="Search…"
+            placeholder={searchPlaceholder}
             className="w-full border-b border-white/10 bg-transparent px-4 py-2.5 font-roboto text-sm text-white placeholder:text-white/30 outline-none"
           />
           <div className="max-h-56 overscroll-contain overflow-y-auto">
             {filtered.length === 0 && (
-              <p className="px-4 py-2.5 font-roboto text-sm text-white/40">No matches</p>
+              <p className="px-4 py-2.5 font-roboto text-sm text-white/40">{noMatchesLabel}</p>
             )}
             {filtered.map((opt) => (
               <button
@@ -152,48 +154,16 @@ function FlagIcon({ country }) {
   )
 }
 
-const standardTerms = [
-  {
-    title: 'Invitation request only',
-    body:
-      'Submitting this form requests access to ARCEL konnect. It does not guarantee acceptance, onboarding, or immediate platform availability.',
-  },
-  {
-    title: 'Information accuracy',
-    body:
-      'You confirm that the details you submit are accurate, current, and provided with authority to represent yourself or your organization.',
-  },
-  {
-    title: 'Communication consent',
-    body:
-      'ARCEL may use your submitted contact details to respond to your request, share onboarding updates, and send essential product communication related to konnect.',
-  },
-  {
-    title: 'Privacy and review',
-    body:
-      'Your information will be reviewed internally for launch access coordination and handled as business contact data for ARCEL konnect operations.',
-  },
-  {
-    title: 'Platform updates',
-    body:
-      'ARCEL may refine platform features, access criteria, timelines, and onboarding requirements before or after launch without prior notice.',
-  },
-  {
-    title: 'Acceptable use',
-    body:
-      'Any eventual access to ARCEL konnect must be used lawfully and in a way that does not interfere with the platform, its users, or ARCEL intellectual property.',
-  },
-]
-
 // "Sign up" popup — a registration form for launch access, opened from
 // TopNav's Sign up button. A centered modal card, not a full-screen page.
 // Submits to /api/send-invite, a Vercel serverless function that emails the
 // submission over SMTP to the ARCEL inboxes.
-export default function SignUpForm({ open, onClose }) {
+export default function SignUpForm({ open, onClose, language = 'en', copy }) {
   const [status, setStatus] = useState('idle') // idle | sending | sent | error
   const [errorMessage, setErrorMessage] = useState('')
   const [showTerms, setShowTerms] = useState(false)
   const [formSeed, setFormSeed] = useState(0)
+  const senses = getSenses(language)
 
   useEffect(() => {
     if (!open) return
@@ -224,7 +194,7 @@ export default function SignUpForm({ open, onClose }) {
 
     if (!data.agree) {
       setStatus('error')
-      setErrorMessage('Please accept the terms and conditions to continue.')
+      setErrorMessage(copy.agreeError)
       return
     }
 
@@ -260,7 +230,7 @@ export default function SignUpForm({ open, onClose }) {
         <button
           type="button"
           onClick={onClose}
-          aria-label="Close"
+          aria-label={copy.close}
           className="absolute right-5 top-5 z-10 flex h-9 w-9 items-center justify-center border border-arcel-blue text-white transition-colors hover:bg-arcel-blue/20 sm:right-8 sm:top-8"
         >
           <svg viewBox="0 0 24 24" className="h-4 w-4" fill="none" stroke="currentColor" strokeWidth="1.8">
@@ -291,10 +261,10 @@ export default function SignUpForm({ open, onClose }) {
           </div>
         </div>
         <h1 className="mt-3 font-heading text-3xl font-bold leading-tight tracking-[-0.02em] text-white sm:text-5xl">
-          Enter the ecosystem.
+          {copy.popupTitle}
         </h1>
         <p className="mt-4 font-roboto text-base text-white/60">
-          Register your interest for launch access.
+          {copy.popupSubtitle}
         </p>
 
         <form
@@ -302,17 +272,17 @@ export default function SignUpForm({ open, onClose }) {
           className="mt-8 grid grid-cols-1 gap-x-8 gap-y-6 sm:grid-cols-2"
           onSubmit={handleSubmit}
         >
-          <Field label="First name">
+          <Field label={copy.firstName}>
             <input type="text" name="firstName" className={inputClass} required />
           </Field>
-          <Field label="Last name">
+          <Field label={copy.lastName}>
             <input type="text" name="lastName" className={inputClass} required />
           </Field>
 
-          <Field label="Pillar">
+          <Field label={copy.pillar}>
             <Select name="pillar" required>
               <option value="" disabled>
-                Select one
+                {copy.selectOne}
               </option>
               {senses.map((sense) => (
                 <option key={sense.key} value={sense.key}>
@@ -321,14 +291,14 @@ export default function SignUpForm({ open, onClose }) {
               ))}
             </Select>
           </Field>
-          <Field label="Profession">
+          <Field label={copy.profession}>
             <input type="text" name="profession" className={inputClass} required />
           </Field>
 
-          <Field label="Email">
+          <Field label={copy.email}>
             <input type="email" name="email" className={inputClass} required />
           </Field>
-          <Field label="Country">
+          <Field label={copy.country}>
             <Combobox
               name="country"
               options={countries}
@@ -340,12 +310,15 @@ export default function SignUpForm({ open, onClose }) {
                   <span>{c.name}</span>
                 </>
               )}
+              placeholder={copy.selectOne}
+              searchPlaceholder={copy.search}
+              noMatchesLabel={copy.noMatches}
               resetSignal={formSeed}
             />
           </Field>
 
           <div className="sm:col-span-2">
-            <Field label="Phone">
+            <Field label={copy.phone}>
               <div className="flex gap-2">
                 <Combobox
                   name="phoneCode"
@@ -360,6 +333,9 @@ export default function SignUpForm({ open, onClose }) {
                       <span>{c.dial}</span>
                     </>
                   )}
+                  placeholder={copy.selectOne}
+                  searchPlaceholder={copy.search}
+                  noMatchesLabel={copy.noMatches}
                   resetSignal={formSeed}
                 />
                 <input type="tel" name="phone" className={inputClass} required />
@@ -376,15 +352,15 @@ export default function SignUpForm({ open, onClose }) {
                 className="mt-0.5 h-4 w-4 shrink-0 border border-white/30 bg-transparent accent-arcel-blue"
               />
               <span>
-                I agree to receive an invitation and accept the{' '}
+                {copy.agreePrefix}
                 <button
                   type="button"
                   onClick={() => setShowTerms((value) => !value)}
                   className="text-arcel-blue underline underline-offset-4"
                 >
-                  standard terms and conditions
+                  {copy.agreeLink}
                 </button>
-                .
+                {copy.agreeSuffix}
               </span>
             </label>
 
@@ -393,10 +369,10 @@ export default function SignUpForm({ open, onClose }) {
                 <div className="flex flex-wrap items-center justify-between gap-3">
                   <div>
                     <p className="font-roboto text-xs font-semibold uppercase tracking-[0.14em] text-arcel-blue">
-                      Terms and Conditions
+                      {copy.termsTitle}
                     </p>
                     <p className="mt-1 font-roboto text-sm text-white/50">
-                      Standard online terms for ARCEL konnect invitation requests.
+                      {copy.termsSubtitle}
                     </p>
                   </div>
                   <button
@@ -404,12 +380,12 @@ export default function SignUpForm({ open, onClose }) {
                     onClick={() => setShowTerms(false)}
                     className="font-roboto text-xs uppercase tracking-[0.12em] text-white/50 transition-colors hover:text-white"
                   >
-                    Close
+                    {copy.close}
                   </button>
                 </div>
 
                 <div className="mt-4 space-y-4">
-                  {standardTerms.map((term, index) => (
+                  {copy.terms.map((term, index) => (
                     <div key={term.title} className="border-t border-white/8 pt-4 first:border-t-0 first:pt-0">
                       <p className="font-roboto text-xs font-semibold uppercase tracking-[0.12em] text-white">
                         {index + 1}. {term.title}
@@ -430,14 +406,14 @@ export default function SignUpForm({ open, onClose }) {
               disabled={status === 'sending'}
               className="flex items-center gap-2 bg-arcel-blue px-6 py-3.5 font-roboto text-sm font-semibold text-white transition-opacity hover:opacity-90 disabled:opacity-50"
             >
-              {status === 'sending' ? 'Sending…' : 'Request invitation'}
+              {status === 'sending' ? copy.sending : copy.requestInvitation}
               <svg viewBox="0 0 24 24" className="h-4 w-4" fill="none" stroke="currentColor" strokeWidth="2">
                 <path d="M7 17L17 7M7 7h10v10" strokeLinecap="round" strokeLinejoin="round" />
               </svg>
             </button>
             {status === 'sent' && (
               <p className="font-roboto text-sm text-arcel-blue">
-                Thanks — your request has been sent.
+                {copy.sent}
               </p>
             )}
             {status === 'error' && (

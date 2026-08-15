@@ -1,12 +1,11 @@
 import { Button } from "./ui/button";
 import { Card, CardContent } from "./ui/card";
-import { senses } from "../data/senses";
 
-export default function FooterNav({ onSelect, activeKey, rotationMs }) {
+export default function FooterNav({ onSelect, activeKey, rotationMs, senses, copy }) {
   return (
     <footer
       className="grid grid-cols-5"
-      aria-label="The six senses"
+      aria-label={copy.sixSenses}
     >
       {senses.map((sense) => {
         const isActive = sense.key === activeKey;

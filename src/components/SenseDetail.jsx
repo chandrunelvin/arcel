@@ -1,16 +1,15 @@
 import { useEffect, useRef } from 'react'
-import { senses } from '../data/senses'
 import FooterNav from './FooterNav'
 import TopNav from './TopNav'
 import Marquee from './Marquee'
 import heroGridOverlay from '../assets/hero-grid-overlay.svg'
 
-function SenseSubtitle({ element, sense, accent, className = '' }) {
+function SenseSubtitle({ element, sense, accent, className = '', copy }) {
   return (
     <p className={className}>
-      <span className="text-white">Intelligence / </span>
+      <span className="text-white">{copy.intelligencePrefix}</span>
       <span style={{ color: accent }}>{element.toUpperCase()}</span>
-      <span className="text-white"> · {sense}</span>
+      <span className="text-white">{copy.subtitleJoiner}{sense}</span>
     </p>
   )
 }
@@ -19,7 +18,17 @@ function SenseSubtitle({ element, sense, accent, className = '' }) {
 // SenseGallery. Same hero composition as the homepage (photo + ringed mark +
 // left heading / right description) but re-themed per sense, with the
 // footer nav's active tab underlined in that sense's accent color.
-export default function SenseDetail({ open, activeKey, onSelect, onBack, onClose }) {
+export default function SenseDetail({
+  open,
+  activeKey,
+  onSelect,
+  onBack,
+  onClose,
+  senses,
+  copy,
+  language,
+  onLanguageChange,
+}) {
   const scrollRef = useRef(null)
 
   useEffect(() => {
@@ -39,7 +48,7 @@ export default function SenseDetail({ open, activeKey, onSelect, onBack, onClose
 
   return (
     <div ref={scrollRef} className="animate-overlay-fade fixed inset-0 z-50 flex flex-col overflow-hidden bg-black">
-      <TopNav />
+      <TopNav language={language} copy={copy} onLanguageChange={onLanguageChange} />
       <div className="flex items-center px-6 py-3 sm:px-10" style={{ background: '#191BDF' }}>
         <Marquee />
       </div>
@@ -49,7 +58,7 @@ export default function SenseDetail({ open, activeKey, onSelect, onBack, onClose
         <button
           type="button"
           onClick={onBack}
-          aria-label="Back to overview"
+          aria-label={copy.backToOverview}
           className="absolute left-5 top-5 z-10 hidden h-10 w-10 items-center justify-center rounded-full bg-white/10 text-white backdrop-blur transition-colors hover:bg-white/20 sm:flex"
         >
           <svg viewBox="0 0 24 24" className="h-5 w-5" fill="none" stroke="currentColor" strokeWidth="1.8">
@@ -96,6 +105,7 @@ export default function SenseDetail({ open, activeKey, onSelect, onBack, onClose
               element={sense.element}
               sense={sense.sense}
               accent={sense.accent}
+              copy={copy}
               className="mt-[15px] font-roboto text-xs font-normal leading-[16px] uppercase tracking-[0.2em]"
             />
           </div>
@@ -122,6 +132,7 @@ export default function SenseDetail({ open, activeKey, onSelect, onBack, onClose
               element={sense.element}
               sense={sense.sense}
               accent={sense.accent}
+              copy={copy}
               className="font-roboto text-[11px] font-normal uppercase tracking-[0.18em]"
             />
             <p className="font-roboto text-[12px] leading-5 text-white/88">
@@ -134,7 +145,7 @@ export default function SenseDetail({ open, activeKey, onSelect, onBack, onClose
       {/* sticky at the bottom on mobile so it's always visible without
           scrolling; sits in normal flow on sm+ like before */}
       <div className="z-20">
-        <FooterNav activeKey={sense.key} onSelect={onSelect} />
+        <FooterNav activeKey={sense.key} onSelect={onSelect} senses={senses} copy={copy} />
       </div>
     </div>
   )

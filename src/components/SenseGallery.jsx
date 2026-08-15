@@ -1,5 +1,4 @@
 import { useEffect, useRef, useState } from 'react'
-import { senses } from '../data/senses'
 import TopNav from './TopNav'
 import Marquee from './Marquee'
 import FooterNav from './FooterNav'
@@ -7,12 +6,12 @@ import lastLogoFirst from '../assets/images/senses-animation-image/last-logo-fir
 import rotatLogoSecond from '../assets/images/senses-animation-image/rotat-logo-secend.svg'
 import intelligenceBg from '../assets/images/senses/intelligence-image-bg.webp'
 
-function SenseSubtitle({ element, sense, accent, className = '' }) {
+function SenseSubtitle({ element, sense, accent, className = '', copy }) {
   return (
     <p className={className}>
-      <span className="text-white">Intelligence / </span>
+      <span className="text-white">{copy.intelligencePrefix}</span>
       <span style={{ color: accent }}>{element.toUpperCase()}</span>
-      <span className="text-white"> · {sense}</span>
+      <span className="text-white">{copy.subtitleJoiner}{sense}</span>
     </p>
   )
 }
@@ -26,7 +25,16 @@ function SenseSubtitle({ element, sense, accent, className = '' }) {
 // centered "arcel Intelligence" lockup, but without the sense tile grid —
 // mobile doesn't get a browsable gallery, just this page as the auto-
 // rotation's landing point.
-export default function SenseGallery({ open, onClose, onSelect, hideTiles = false }) {
+export default function SenseGallery({
+  open,
+  onClose,
+  onSelect,
+  hideTiles = false,
+  senses,
+  copy,
+  language,
+  onLanguageChange,
+}) {
   const btnRefs = useRef({})
   const gridRef = useRef(null)
   // FLIP-style transition: the clicked column's own photo grows from its
@@ -114,7 +122,7 @@ export default function SenseGallery({ open, onClose, onSelect, hideTiles = fals
       {/* relative + z-index above the sliding clone below, so the header
           never gets covered even for a stray pixel while it's animating */}
       <div className="relative z-[70]">
-        <TopNav />
+        <TopNav language={language} copy={copy} onLanguageChange={onLanguageChange} />
         <div className="flex items-center px-6 py-3 sm:px-10" style={{ background: '#191BDF' }}>
           <Marquee />
         </div>
@@ -190,7 +198,7 @@ export default function SenseGallery({ open, onClose, onSelect, hideTiles = fals
           the space below the grid/expanded photo just looked empty. No tab
           is active while sitting on the overview grid — only once a tile
           is picked and expanded does its tab light up. */}
-      <FooterNav activeKey={expanding?.key ?? null} onSelect={handleFooterPick} />
+      <FooterNav activeKey={expanding?.key ?? null} onSelect={handleFooterPick} senses={senses} copy={copy} />
 
       {expanding && (
         <div
@@ -227,7 +235,7 @@ export default function SenseGallery({ open, onClose, onSelect, hideTiles = fals
           <button
             type="button"
             onClick={handleCollapse}
-            aria-label="Back to overview"
+            aria-label={copy.backToOverview}
             className="absolute left-5 top-5 z-10 hidden h-10 w-10 items-center justify-center rounded-full bg-white/10 text-white backdrop-blur transition-opacity duration-500 hover:bg-white/20 sm:flex"
             style={{ opacity: expanding.active ? 1 : 0, transitionDelay: expanding.active ? '460ms' : '0ms' }}
           >
@@ -266,6 +274,7 @@ export default function SenseGallery({ open, onClose, onSelect, hideTiles = fals
                 element={expanding.sense.element}
                 sense={expanding.sense.sense}
                 accent={expanding.sense.accent}
+                copy={copy}
                 className="mt-[15px] font-roboto text-xs font-normal leading-[16px] uppercase tracking-[0.2em]"
               />
             </div>
@@ -291,6 +300,7 @@ export default function SenseGallery({ open, onClose, onSelect, hideTiles = fals
                 element={expanding.sense.element}
                 sense={expanding.sense.sense}
                 accent={expanding.sense.accent}
+                copy={copy}
                 className="font-roboto text-[11px] font-normal uppercase tracking-[0.18em]"
               />
               <p className="font-roboto text-[12px] leading-5 text-white/88">
