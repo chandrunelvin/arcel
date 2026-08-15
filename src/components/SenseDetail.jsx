@@ -114,7 +114,7 @@ export default function SenseDetail({ open, activeKey, onSelect, onBack, onClose
               above the footer nav */}
           <div className="flex max-w-xs flex-col items-center gap-3 text-center sm:hidden">
             <h1
-              className="font-heading text-2xl font-semibold leading-tight tracking-[-0.32px] text-white"
+              className="font-heading text-3xl font-semibold leading-tight tracking-[-0.32px] text-white"
             >
               {sense.title}
             </h1>

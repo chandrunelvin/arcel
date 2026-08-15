@@ -5,6 +5,7 @@ import Marquee from './Marquee'
 import FooterNav from './FooterNav'
 import lastLogoFirst from '../assets/images/senses-animation-image/last-logo-first.svg'
 import rotatLogoSecond from '../assets/images/senses-animation-image/rotat-logo-secend.svg'
+import intelligenceBg from '../assets/images/senses/intelligence-image-bg.webp'
 
 function SenseSubtitle({ element, sense, accent, className = '' }) {
   return (
@@ -99,6 +100,17 @@ export default function SenseGallery({ open, onClose, onSelect, hideTiles = fals
         ref={gridRef}
         className={`relative grid flex-1 ${hideTiles ? 'grid-cols-1 bg-black' : 'grid-cols-2 sm:grid-cols-5'} ${expanding ? 'pointer-events-none' : ''}`}
       >
+        {/* mobile-only backdrop, same photo as the home finale beat */}
+        {hideTiles && (
+          <div className="pointer-events-none absolute inset-0">
+            <div
+              className="absolute inset-0 bg-cover bg-center"
+              style={{ backgroundImage: `url(${intelligenceBg})` }}
+            />
+            <div className="absolute inset-0" style={{ background: '#00000099' }} />
+          </div>
+        )}
+
         {!hideTiles &&
           senses.map((sense, i) => {
             return (
@@ -238,7 +250,7 @@ export default function SenseGallery({ open, onClose, onSelect, hideTiles = fals
             {/* title + description — mobile only, shown below the mark */}
             <div className="flex max-w-xs flex-col items-center gap-3 text-center sm:hidden">
               <h1
-                className="font-heading text-2xl font-semibold leading-tight tracking-[-0.32px] text-white"
+                className="font-heading text-3xl font-semibold leading-tight tracking-[-0.32px] text-white"
               >
                 {expanding.sense.title}
               </h1>
