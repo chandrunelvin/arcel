@@ -1,26 +1,10 @@
-import { useEffect } from 'react'
+import { useEffect, useState } from 'react'
 import { senses } from '../data/senses'
+import { countries } from '../data/countries'
 
-const countries = [
-  'United Arab Emirates', 'Saudi Arabia', 'Qatar', 'Kuwait', 'Bahrain', 'Oman',
-  'United Kingdom', 'United States', 'India', 'Singapore', 'Egypt', 'Other',
-]
-
-// flag + ISO-3166 alpha-3 code + dial code, for the phone field's country
-// code selector.
-const phoneCodes = [
-  { flag: '🇦🇪', code: 'ARE', dial: '+971' },
-  { flag: '🇸🇦', code: 'SAU', dial: '+966' },
-  { flag: '🇶🇦', code: 'QAT', dial: '+974' },
-  { flag: '🇰🇼', code: 'KWT', dial: '+965' },
-  { flag: '🇧🇭', code: 'BHR', dial: '+973' },
-  { flag: '🇴🇲', code: 'OMN', dial: '+968' },
-  { flag: '🇬🇧', code: 'GBR', dial: '+44' },
-  { flag: '🇺🇸', code: 'USA', dial: '+1' },
-  { flag: '🇮🇳', code: 'IND', dial: '+91' },
-  { flag: '🇸🇬', code: 'SGP', dial: '+65' },
-  { flag: '🇪🇬', code: 'EGY', dial: '+20' },
-]
+// every country has a real dial code, so the phone selector reuses the
+// same full list — flag + name + dial code stay in sync everywhere.
+const phoneCodes = countries
 
 function Field({ label, children }) {
   return (
@@ -61,8 +45,12 @@ function Select({ children, className = '', ...props }) {
 
 // "Sign up" popup — a registration form for launch access, opened from
 // TopNav's Sign up button. A centered modal card, not a full-screen page.
-// Self-contained (no submit wiring yet — this is just the form UI).
+// Submits to /api/send-invite, a Vercel serverless function that emails the
+// submission over SMTP to the Arcel inboxes.
 export default function SignUpForm({ open, onClose }) {
+  const [status, setStatus] = useState('idle') // idle | sending | sent | error
+  const [errorMessage, setErrorMessage] = useState('')
+
   useEffect(() => {
     if (!open) return
     const onKey = (e) => e.key === 'Escape' && onClose?.()
@@ -73,6 +61,40 @@ export default function SignUpForm({ open, onClose }) {
       document.body.style.overflow = ''
     }
   }, [open, onClose])
+
+  // fresh form each time the popup reopens
+  useEffect(() => {
+    if (open) {
+      setStatus('idle')
+      setErrorMessage('')
+    }
+  }, [open])
+
+  const handleSubmit = async (e) => {
+    e.preventDefault()
+    const form = e.currentTarget
+    const data = Object.fromEntries(new FormData(form))
+    data.agree = form.agree.checked
+
+    setStatus('sending')
+    setErrorMessage('')
+    try {
+      const res = await fetch('/api/send-invite', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify(data),
+      })
+      if (!res.ok) {
+        const body = await res.json().catch(() => ({}))
+        throw new Error(body.error || 'Something went wrong')
+      }
+      setStatus('sent')
+      form.reset()
+    } catch (err) {
+      setStatus('error')
+      setErrorMessage(err.message)
+    }
+  }
 
   if (!open) return null
 
@@ -105,7 +127,7 @@ export default function SignUpForm({ open, onClose }) {
 
         <form
           className="mt-8 grid grid-cols-1 gap-x-8 gap-y-6 sm:grid-cols-2"
-          onSubmit={(e) => e.preventDefault()}
+          onSubmit={handleSubmit}
         >
           <Field label="First name">
             <input type="text" name="firstName" className={inputClass} />
@@ -138,9 +160,9 @@ export default function SignUpForm({ open, onClose }) {
               <option value="" disabled>
                 Select one
               </option>
-              {countries.map((country) => (
-                <option key={country} value={country}>
-                  {country}
+              {countries.map(({ flag, name }) => (
+                <option key={name} value={name}>
+                  {flag} {name}
                 </option>
               ))}
             </Select>
@@ -170,16 +192,25 @@ export default function SignUpForm({ open, onClose }) {
             I agree to receive an invitation and accept the terms and conditions.
           </label>
 
-          <div className="sm:col-span-2">
+          <div className="flex flex-col gap-3 sm:col-span-2">
             <button
               type="submit"
-              className="flex items-center gap-2 bg-arcel-blue px-6 py-3.5 font-roboto text-sm font-semibold text-white transition-opacity hover:opacity-90"
+              disabled={status === 'sending'}
+              className="flex items-center gap-2 bg-arcel-blue px-6 py-3.5 font-roboto text-sm font-semibold text-white transition-opacity hover:opacity-90 disabled:opacity-50"
             >
-              Request invitation
+              {status === 'sending' ? 'Sending…' : 'Request invitation'}
               <svg viewBox="0 0 24 24" className="h-4 w-4" fill="none" stroke="currentColor" strokeWidth="2">
                 <path d="M7 17L17 7M7 7h10v10" strokeLinecap="round" strokeLinejoin="round" />
               </svg>
             </button>
+            {status === 'sent' && (
+              <p className="font-roboto text-sm text-arcel-blue">
+                Thanks — your request has been sent.
+              </p>
+            )}
+            {status === 'error' && (
+              <p className="font-roboto text-sm text-red-400">{errorMessage}</p>
+            )}
           </div>
         </form>
       </div>
