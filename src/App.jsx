@@ -111,16 +111,20 @@ function App() {
           {/* all five sense photos stay mounted, stacked, and crossfade via
               opacity — this is a true crossfade (outgoing fades out while
               incoming fades in simultaneously) rather than a hard swap */}
-          {[...senses, FINALE].map((sense) => (
-            <div
-              key={sense.key}
-              className="absolute inset-0 bg-cover bg-center transition-opacity duration-500 ease-[cubic-bezier(0.22,0.61,0.36,1)]"
-              style={{
-                backgroundImage: `url(${sense.bg})`,
-                opacity: sense.key === homeSense.key ? 1 : 0,
-              }}
-            />
-          ))}
+          {[...senses, FINALE].map((sense) => {
+            const isActive = sense.key === homeSense.key
+            return (
+              <div
+                key={sense.key}
+                className="absolute inset-0 bg-cover bg-center transition-[opacity,transform] duration-[1400ms] ease-[cubic-bezier(0.22,0.61,0.36,1)]"
+                style={{
+                  backgroundImage: `url(${sense.bg})`,
+                  opacity: isActive ? 1 : 0,
+                  transform: isActive ? 'scale(1)' : 'scale(1.06)',
+                }}
+              />
+            )
+          })}
           <div className="absolute inset-0" style={{ background: '#00000099' }} />
           <img
             src={heroGridOverlay}
