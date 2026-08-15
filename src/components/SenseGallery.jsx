@@ -83,6 +83,30 @@ export default function SenseGallery({ open, onClose, onSelect, hideTiles = fals
     setExpanding({ key: sense.key, sense, rect, targetRect, active: false })
   }
 
+  const handleFooterPick = (key) => {
+    const sense = senses.find((item) => item.key === key)
+    if (!sense) return
+    if (hideTiles) {
+      onSelect?.(key)
+      return
+    }
+    if (expanding) {
+      setExpanding((current) =>
+        current
+          ? {
+              ...current,
+              key: sense.key,
+              sense,
+              active: true,
+              closing: false,
+            }
+          : current
+      )
+      return
+    }
+    handlePick(sense)
+  }
+
   if (!open && !expanding) return null
 
   return (
@@ -151,12 +175,12 @@ export default function SenseGallery({ open, onClose, onSelect, hideTiles = fals
             <img
               src={lastLogoFirst}
               alt=""
-              className="w-[90px] drop-shadow-[0_0_30px_rgba(0,0,0,0.6)] sm:w-[120px]"
+              className="w-[104px] drop-shadow-[0_0_30px_rgba(0,0,0,0.6)] sm:w-[152px] lg:w-[176px]"
             />
             <img
               src={rotatLogoSecond}
               alt=""
-              className="animate-spin-slow w-[55px] drop-shadow-[0_0_30px_rgba(0,0,0,0.6)] sm:w-[72px]"
+              className="animate-spin-slow w-[56px] drop-shadow-[0_0_30px_rgba(0,0,0,0.6)] sm:w-[80px] lg:w-[92px]"
             />
           </div>
         )}
@@ -166,7 +190,7 @@ export default function SenseGallery({ open, onClose, onSelect, hideTiles = fals
           the space below the grid/expanded photo just looked empty. No tab
           is active while sitting on the overview grid — only once a tile
           is picked and expanded does its tab light up. */}
-      <FooterNav activeKey={expanding?.key ?? null} onSelect={(key) => onSelect?.(key)} />
+      <FooterNav activeKey={expanding?.key ?? null} onSelect={handleFooterPick} />
 
       {expanding && (
         <div
@@ -219,6 +243,7 @@ export default function SenseGallery({ open, onClose, onSelect, hideTiles = fals
           {/* same center layout as SenseDetail: side text on sm+, stacked
               title/description below the mark on mobile */}
           <div
+            key={expanding.key}
             className="relative flex flex-1 flex-col items-center justify-center gap-6 px-6 transition-opacity duration-300 sm:flex-row sm:justify-center sm:gap-0"
             style={{ opacity: expanding.active ? 1 : 0, transitionDelay: expanding.active ? '250ms' : '0ms' }}
           >
