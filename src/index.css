@@ -394,6 +394,15 @@ body,
   animation: flywheel-rotate 9.6s cubic-bezier(0.22, 0.61, 0.36, 1) infinite;
 }
 
+/* Same stepped rotation, just slower on mobile — at that size/viewing
+   distance the 9.6s desktop pace reads as a fast, jerky snap between
+   positions rather than a deliberate turn. */
+@media (max-width: 639px) {
+  .flywheel [data-fill-rotor] {
+    animation-duration: 22s;
+  }
+}
+
 .flywheel [data-fill-wipe] {
   width: 0;
   opacity: 0;
