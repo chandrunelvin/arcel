@@ -205,12 +205,18 @@ function App() {
 
       {/* footer nav: desktop opens the gallery, mobile jumps straight to
           the full detail page and skips the gallery entirely. No tab is
-          "Intelligence", so none is marked active during the finale beat. */}
-      <FooterNav
-        activeKey={nav.view === 'closed' ? (isFinale ? null : footerSense.key) : nav.activeKey}
-        rotationMs={nav.view === 'closed' && !isFinale ? BEAT_MS : undefined}
-        onSelect={(key) => setNav({ view: isMobile ? 'detail' : 'gallery', activeKey: key })}
-      />
+          "Intelligence", so none is marked active during the finale beat.
+          Sticky at the bottom on mobile (same as SenseDetail/SenseGallery)
+          so it's always shown in full instead of trailing off past the
+          fold when the hero's extra title/description text pushes the
+          page taller than the viewport. */}
+      <div className="sticky bottom-0 z-20 sm:static">
+        <FooterNav
+          activeKey={nav.view === 'closed' ? (isFinale ? null : footerSense.key) : nav.activeKey}
+          rotationMs={nav.view === 'closed' && !isFinale ? BEAT_MS : undefined}
+          onSelect={(key) => setNav({ view: isMobile ? 'detail' : 'gallery', activeKey: key })}
+        />
+      </div>
 
       <SenseGallery
         open={nav.view === 'gallery'}
