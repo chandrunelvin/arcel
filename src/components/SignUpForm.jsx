@@ -156,7 +156,7 @@ const standardTerms = [
   {
     title: 'Invitation request only',
     body:
-      'Submitting this form requests access to Arcel Konnect. It does not guarantee acceptance, onboarding, or immediate platform availability.',
+      'Submitting this form requests access to ARCEL konnect. It does not guarantee acceptance, onboarding, or immediate platform availability.',
   },
   {
     title: 'Information accuracy',
@@ -166,29 +166,29 @@ const standardTerms = [
   {
     title: 'Communication consent',
     body:
-      'Arcel may use your submitted contact details to respond to your request, share onboarding updates, and send essential product communication related to Arcel Konnect.',
+      'ARCEL may use your submitted contact details to respond to your request, share onboarding updates, and send essential product communication related to konnect.',
   },
   {
     title: 'Privacy and review',
     body:
-      'Your information will be reviewed internally for launch access coordination and handled as business contact data for Arcel Konnect operations.',
+      'Your information will be reviewed internally for launch access coordination and handled as business contact data for ARCEL konnect operations.',
   },
   {
     title: 'Platform updates',
     body:
-      'Arcel may refine platform features, access criteria, timelines, and onboarding requirements before or after launch without prior notice.',
+      'ARCEL may refine platform features, access criteria, timelines, and onboarding requirements before or after launch without prior notice.',
   },
   {
     title: 'Acceptable use',
     body:
-      'Any eventual access to Arcel Konnect must be used lawfully and in a way that does not interfere with the platform, its users, or Arcel intellectual property.',
+      'Any eventual access to ARCEL konnect must be used lawfully and in a way that does not interfere with the platform, its users, or ARCEL intellectual property.',
   },
 ]
 
 // "Sign up" popup — a registration form for launch access, opened from
 // TopNav's Sign up button. A centered modal card, not a full-screen page.
 // Submits to /api/send-invite, a Vercel serverless function that emails the
-// submission over SMTP to the Arcel inboxes.
+// submission over SMTP to the ARCEL inboxes.
 export default function SignUpForm({ open, onClose }) {
   const [status, setStatus] = useState('idle') // idle | sending | sent | error
   const [errorMessage, setErrorMessage] = useState('')
@@ -268,14 +268,14 @@ export default function SignUpForm({ open, onClose }) {
           </svg>
         </button>
 
-        {/* "arcel" (cropped from the lockup, plain on the card background)
-            + "Konnect" — only the Konnect half gets a blue box, and it's
+        {/* "ARCEL" (cropped from the lockup, plain on the card background)
+            + "konnect" — only the konnect half gets a blue box, and it's
             the live, continuously-scrolling graphic, not the static lockup */}
         <div className="flex items-center">
           <div className="relative h-8 w-[83px] overflow-hidden sm:h-10 sm:w-[103px]">
             <img
               src={arcelKonnectLogo}
-              alt="Arcel"
+              alt="ARCEL"
               className="absolute left-0 top-0 h-full w-auto max-w-none"
             />
           </div>
@@ -285,7 +285,7 @@ export default function SignUpForm({ open, onClose }) {
           >
             <img
               src={konnectMovingImage}
-              alt="Konnect"
+              alt="konnect"
               className="animate-ticker-loop absolute h-5 w-auto max-w-none sm:h-7"
             />
           </div>
@@ -396,7 +396,7 @@ export default function SignUpForm({ open, onClose }) {
                       Terms and Conditions
                     </p>
                     <p className="mt-1 font-roboto text-sm text-white/50">
-                      Standard online terms for Arcel Konnect invitation requests.
+                      Standard online terms for ARCEL konnect invitation requests.
                     </p>
                   </div>
                   <button
