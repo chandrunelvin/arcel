@@ -1,4 +1,4 @@
-import movingText from '../assets/images/header-image/move-text.png'
+import movingText from '../assets/images/header-image/moving-text-05.png'
 
 // LED/dot-matrix style ticker, e.g. "LAUNCHING · 15 · OCTOBER" — a single
 // line that scrolls once from right to left, then stays put.

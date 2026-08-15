@@ -1,10 +1,5 @@
-// Flag emoji is derived from the ISO-3166 alpha-2 code (regional indicator
-// symbols), so we only ever need to keep the code + dial code in sync —
-// never a hand-picked emoji per country.
-function flagFromCode(iso2) {
-  return iso2
-    .toUpperCase()
-    .replace(/./g, (c) => String.fromCodePoint(c.charCodeAt(0) + 127397))
+function flagUrlFromCode(iso2) {
+  return `https://flagcdn.com/w40/${iso2.toLowerCase()}.png`
 }
 
 const raw = [
@@ -76,5 +71,11 @@ const raw = [
 ]
 
 export const countries = raw
-  .map(([name, iso2, dial]) => ({ name, code: iso2, dial, flag: flagFromCode(iso2) }))
+  .map(([name, iso2, dial]) => ({
+    name,
+    code: iso2,
+    dial,
+    flagUrl: flagUrlFromCode(iso2),
+    flagAlt: `${name} flag`,
+  }))
   .sort((a, b) => a.name.localeCompare(b.name))

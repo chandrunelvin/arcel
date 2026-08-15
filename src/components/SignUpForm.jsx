@@ -1,6 +1,7 @@
 import { useEffect, useRef, useState } from 'react'
 import { senses } from '../data/senses'
 import { countries } from '../data/countries'
+import arcelKonnectLogo from '../assets/Arcel-Konnect-form-logo.png'
 
 // every country has a real dial code, so the phone selector reuses the
 // same full list — flag + name + dial code stay in sync everywhere.
@@ -57,6 +58,7 @@ function Combobox({
   renderOption,
   placeholder = 'Select one',
   className = '',
+  resetSignal,
 }) {
   const [open, setOpen] = useState(false)
   const [query, setQuery] = useState('')
@@ -71,6 +73,12 @@ function Combobox({
     document.addEventListener('mousedown', onPointerDown)
     return () => document.removeEventListener('mousedown', onPointerDown)
   }, [open])
+
+  useEffect(() => {
+    setOpen(false)
+    setQuery('')
+    setSelectedKey('')
+  }, [resetSignal])
 
   const filtered = options.filter((opt) => getLabel(opt).toLowerCase().includes(query.trim().toLowerCase()))
   const selected = options.find((opt) => getKey(opt) === selectedKey)
@@ -132,6 +140,50 @@ function Combobox({
   )
 }
 
+function FlagIcon({ country }) {
+  return (
+    <img
+      src={country.flagUrl}
+      alt={country.flagAlt}
+      className="h-4 w-6 rounded-[2px] border border-white/10 object-cover shadow-[0_0_0_1px_rgba(255,255,255,0.04)]"
+      loading="lazy"
+    />
+  )
+}
+
+const standardTerms = [
+  {
+    title: 'Invitation request only',
+    body:
+      'Submitting this form requests access to Arcel Konnect. It does not guarantee acceptance, onboarding, or immediate platform availability.',
+  },
+  {
+    title: 'Information accuracy',
+    body:
+      'You confirm that the details you submit are accurate, current, and provided with authority to represent yourself or your organization.',
+  },
+  {
+    title: 'Communication consent',
+    body:
+      'Arcel may use your submitted contact details to respond to your request, share onboarding updates, and send essential product communication related to Arcel Konnect.',
+  },
+  {
+    title: 'Privacy and review',
+    body:
+      'Your information will be reviewed internally for launch access coordination and handled as business contact data for Arcel Konnect operations.',
+  },
+  {
+    title: 'Platform updates',
+    body:
+      'Arcel may refine platform features, access criteria, timelines, and onboarding requirements before or after launch without prior notice.',
+  },
+  {
+    title: 'Acceptable use',
+    body:
+      'Any eventual access to Arcel Konnect must be used lawfully and in a way that does not interfere with the platform, its users, or Arcel intellectual property.',
+  },
+]
+
 // "Sign up" popup — a registration form for launch access, opened from
 // TopNav's Sign up button. A centered modal card, not a full-screen page.
 // Submits to /api/send-invite, a Vercel serverless function that emails the
@@ -139,6 +191,8 @@ function Combobox({
 export default function SignUpForm({ open, onClose }) {
   const [status, setStatus] = useState('idle') // idle | sending | sent | error
   const [errorMessage, setErrorMessage] = useState('')
+  const [showTerms, setShowTerms] = useState(false)
+  const [formSeed, setFormSeed] = useState(0)
 
   useEffect(() => {
     if (!open) return
@@ -156,6 +210,8 @@ export default function SignUpForm({ open, onClose }) {
     if (open) {
       setStatus('idle')
       setErrorMessage('')
+      setShowTerms(false)
+      setFormSeed((seed) => seed + 1)
     }
   }, [open])
 
@@ -164,6 +220,12 @@ export default function SignUpForm({ open, onClose }) {
     const form = e.currentTarget
     const data = Object.fromEntries(new FormData(form))
     data.agree = form.agree.checked
+
+    if (!data.agree) {
+      setStatus('error')
+      setErrorMessage('Please accept the terms and conditions to continue.')
+      return
+    }
 
     setStatus('sending')
     setErrorMessage('')
@@ -178,7 +240,8 @@ export default function SignUpForm({ open, onClose }) {
         throw new Error(body.error || 'Something went wrong')
       }
       setStatus('sent')
-      form.reset()
+      setShowTerms(false)
+      setFormSeed((seed) => seed + 1)
     } catch (err) {
       setStatus('error')
       setErrorMessage(err.message)
@@ -204,9 +267,11 @@ export default function SignUpForm({ open, onClose }) {
           </svg>
         </button>
 
-        <p className="font-roboto text-xs font-semibold uppercase tracking-[0.15em] text-arcel-blue">
-          Arcel Konnect
-        </p>
+        <img
+          src={arcelKonnectLogo}
+          alt="Arcel Konnect"
+          className="h-8 w-auto sm:h-10"
+        />
         <h1 className="mt-3 font-heading text-3xl font-bold leading-tight tracking-[-0.02em] text-white sm:text-5xl">
           Enter the ecosystem.
         </h1>
@@ -215,18 +280,19 @@ export default function SignUpForm({ open, onClose }) {
         </p>
 
         <form
+          key={formSeed}
           className="mt-8 grid grid-cols-1 gap-x-8 gap-y-6 sm:grid-cols-2"
           onSubmit={handleSubmit}
         >
           <Field label="First name">
-            <input type="text" name="firstName" className={inputClass} />
+            <input type="text" name="firstName" className={inputClass} required />
           </Field>
           <Field label="Last name">
-            <input type="text" name="lastName" className={inputClass} />
+            <input type="text" name="lastName" className={inputClass} required />
           </Field>
 
           <Field label="Pillar">
-            <Select name="pillar">
+            <Select name="pillar" required>
               <option value="" disabled>
                 Select one
               </option>
@@ -238,11 +304,11 @@ export default function SignUpForm({ open, onClose }) {
             </Select>
           </Field>
           <Field label="Profession">
-            <input type="text" name="profession" className={inputClass} />
+            <input type="text" name="profession" className={inputClass} required />
           </Field>
 
           <Field label="Email">
-            <input type="email" name="email" className={inputClass} />
+            <input type="email" name="email" className={inputClass} required />
           </Field>
           <Field label="Country">
             <Combobox
@@ -250,7 +316,13 @@ export default function SignUpForm({ open, onClose }) {
               options={countries}
               getLabel={(c) => c.name}
               getValue={(c) => c.name}
-              renderOption={(c) => `${c.flag} ${c.name}`}
+              renderOption={(c) => (
+                <>
+                  <FlagIcon country={c} />
+                  <span>{c.name}</span>
+                </>
+              )}
+              resetSignal={formSeed}
             />
           </Field>
 
@@ -264,21 +336,75 @@ export default function SignUpForm({ open, onClose }) {
                   getLabel={(c) => `${c.name} ${c.code} ${c.dial}`}
                   getValue={(c) => c.dial}
                   getKey={(c) => c.code}
-                  renderOption={(c) => `${c.flag} ${c.dial}`}
+                  renderOption={(c) => (
+                    <>
+                      <FlagIcon country={c} />
+                      <span>{c.dial}</span>
+                    </>
+                  )}
+                  resetSignal={formSeed}
                 />
-                <input type="tel" name="phone" className={inputClass} />
+                <input type="tel" name="phone" className={inputClass} required />
               </div>
             </Field>
           </div>
 
-          <label className="flex items-start gap-3 font-roboto text-sm text-white/70 sm:col-span-2">
-            <input
-              type="checkbox"
-              name="agree"
-              className="mt-0.5 h-4 w-4 shrink-0 border border-white/30 bg-transparent accent-arcel-blue"
-            />
-            I agree to receive an invitation and accept the terms and conditions.
-          </label>
+          <div className="sm:col-span-2">
+            <label className="flex items-start gap-3 font-roboto text-sm text-white/70">
+              <input
+                type="checkbox"
+                name="agree"
+                required
+                className="mt-0.5 h-4 w-4 shrink-0 border border-white/30 bg-transparent accent-arcel-blue"
+              />
+              <span>
+                I agree to receive an invitation and accept the{' '}
+                <button
+                  type="button"
+                  onClick={() => setShowTerms((value) => !value)}
+                  className="text-arcel-blue underline underline-offset-4"
+                >
+                  standard terms and conditions
+                </button>
+                .
+              </span>
+            </label>
+
+            {showTerms && (
+              <div className="mt-4 border border-white/10 bg-white/[0.03] p-4 sm:p-5">
+                <div className="flex flex-wrap items-center justify-between gap-3">
+                  <div>
+                    <p className="font-roboto text-xs font-semibold uppercase tracking-[0.14em] text-arcel-blue">
+                      Terms and Conditions
+                    </p>
+                    <p className="mt-1 font-roboto text-sm text-white/50">
+                      Standard online terms for Arcel Konnect invitation requests.
+                    </p>
+                  </div>
+                  <button
+                    type="button"
+                    onClick={() => setShowTerms(false)}
+                    className="font-roboto text-xs uppercase tracking-[0.12em] text-white/50 transition-colors hover:text-white"
+                  >
+                    Close
+                  </button>
+                </div>
+
+                <div className="mt-4 space-y-4">
+                  {standardTerms.map((term, index) => (
+                    <div key={term.title} className="border-t border-white/8 pt-4 first:border-t-0 first:pt-0">
+                      <p className="font-roboto text-xs font-semibold uppercase tracking-[0.12em] text-white">
+                        {index + 1}. {term.title}
+                      </p>
+                      <p className="mt-1.5 font-roboto text-sm leading-6 text-white/65">
+                        {term.body}
+                      </p>
+                    </div>
+                  ))}
+                </div>
+              </div>
+            )}
+          </div>
 
           <div className="flex flex-col gap-3 sm:col-span-2">
             <button
