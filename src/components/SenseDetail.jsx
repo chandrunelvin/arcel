@@ -53,7 +53,7 @@ export default function SenseDetail({
         <Marquee />
       </div>
 
-      <main key={sense.key} className="relative flex min-h-0 flex-1 flex-col overflow-hidden">
+      <main className="relative flex min-h-0 flex-1 flex-col overflow-hidden">
         {/* back to gallery / close to home */}
         <button
           type="button"
@@ -66,22 +66,31 @@ export default function SenseDetail({
           </svg>
         </button>
 
-        {/* per-sense photo — swap the file in src/assets/images/senses/ to update */}
+        {/* per-sense photo — all senses stay mounted, stacked, and
+            crossfade via opacity + a gentle scale settle, so switching
+            senses blends smoothly instead of hard-cutting to black and
+            back (same treatment as the home hero) */}
         <div className="pointer-events-none absolute inset-0">
-          <div
-            className="animate-detail-bg-in absolute inset-0 bg-cover bg-center"
-            style={{ backgroundImage: `url(${sense.bg})` }}
-          />
-          <div className="animate-detail-bg-in absolute inset-0" style={{ background: '#00000099' }} />
-          <img
-            src={heroGridOverlay}
-            alt=""
-            className="animate-detail-bg-in absolute inset-0 h-full w-full object-cover opacity-30"
-          />
+          {senses.map((s) => (
+            <div
+              key={s.key}
+              className="absolute inset-0 bg-cover bg-center transition-[opacity,transform] duration-[1400ms] ease-[cubic-bezier(0.22,0.61,0.36,1)]"
+              style={{
+                backgroundImage: `url(${s.bg})`,
+                opacity: s.key === sense.key ? 1 : 0,
+                transform: s.key === sense.key ? 'scale(1)' : 'scale(1.06)',
+              }}
+            />
+          ))}
+          <div className="absolute inset-0" style={{ background: '#00000099' }} />
+          <img src={heroGridOverlay} alt="" className="absolute inset-0 h-full w-full object-cover opacity-30" />
         </div>
 
         {/* right description */}
-        <div className="animate-detail-content-in pointer-events-none absolute right-6 top-1/2 hidden max-w-[360px] -translate-y-1/2 text-right font-roboto text-base leading-7 text-white/92 sm:block sm:right-14">
+        <div
+          key={sense.key}
+          className="animate-detail-content-in pointer-events-none absolute right-6 top-1/2 hidden max-w-[360px] -translate-y-1/2 text-right font-roboto text-base leading-7 text-white/92 sm:block sm:right-14"
+        >
           {sense.description}
         </div>
 
@@ -93,7 +102,10 @@ export default function SenseDetail({
             before the peek bar, which is where it's expected to be.
             Side-by-side + vertically centered with the absolute left/right
             text on sm+, unchanged. */}
-        <div className="animate-detail-content-in relative flex min-h-0 flex-1 flex-col items-center justify-center gap-3 px-5 py-4 sm:flex-row sm:justify-center sm:gap-0 sm:px-6 sm:py-16">
+        <div
+          key={sense.key}
+          className="animate-detail-content-in relative flex min-h-0 flex-1 flex-col items-center justify-center gap-3 px-5 py-4 sm:flex-row sm:justify-center sm:gap-0 sm:px-6 sm:py-16"
+        >
           {/* left label — desktop/tablet only */}
           <div className="absolute left-6 top-1/2 hidden -translate-y-1/2 text-left sm:block sm:left-14 md:left-24">
             <h1

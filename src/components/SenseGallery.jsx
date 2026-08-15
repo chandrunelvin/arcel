@@ -179,16 +179,22 @@ export default function SenseGallery({
             — wordmark and mark side by side as one image, only the mark
             half spins */}
         {!expanding && (
-          <div className="animate-panel-in pointer-events-none absolute inset-0 z-10 flex items-center justify-center gap-2 overflow-hidden sm:gap-3">
+          <div className="animate-panel-in pointer-events-none absolute inset-0 z-10 flex items-center justify-center gap-2 overflow-hidden sm:gap-[1.2%]">
+            {/* mobile (hideTiles, single column) keeps its fixed size;
+                desktop (5-tile grid, sm+) is sized off viewport width
+                instead (each tile is ~20vw) so the lockup scales
+                continuously and always stays centered and inside the
+                middle tile instead of overflowing at in-between desktop
+                widths like the old fixed sm:/lg: breakpoints did */}
             <img
               src={lastLogoFirst}
               alt=""
-              className="w-[104px] drop-shadow-[0_0_30px_rgba(0,0,0,0.6)] sm:w-[152px] lg:w-[176px]"
+              className="w-[104px] drop-shadow-[0_0_30px_rgba(0,0,0,0.6)] sm:w-[clamp(72px,10vw,170px)]"
             />
             <img
               src={rotatLogoSecond}
               alt=""
-              className="animate-spin-slow w-[56px] drop-shadow-[0_0_30px_rgba(0,0,0,0.6)] sm:w-[80px] lg:w-[92px]"
+              className="animate-spin-slow w-[56px] drop-shadow-[0_0_30px_rgba(0,0,0,0.6)] sm:w-[clamp(36px,5vw,85px)]"
             />
           </div>
         )}
@@ -223,12 +229,21 @@ export default function SenseGallery({
           }}
         >
           {/* photo is visible immediately (not fade-delayed) so it grows
-              in step with the box itself — only the text/mark below fade
-              in afterwards, once the box has finished growing */}
-          <div
-            className="absolute inset-0 bg-cover bg-center"
-            style={{ backgroundImage: `url(${expanding.sense.bg})` }}
-          />
+              in step with the box itself. All senses stay stacked and
+              crossfade via opacity + a gentle scale settle, so switching
+              senses while already expanded (via the footer nav) blends
+              smoothly instead of hard-cutting straight to the new photo. */}
+          {senses.map((s) => (
+            <div
+              key={s.key}
+              className="absolute inset-0 bg-cover bg-center transition-[opacity,transform] duration-[1400ms] ease-[cubic-bezier(0.22,0.61,0.36,1)]"
+              style={{
+                backgroundImage: `url(${s.bg})`,
+                opacity: s.key === expanding.key ? 1 : 0,
+                transform: s.key === expanding.key ? 'scale(1)' : 'scale(1.06)',
+              }}
+            />
+          ))}
           <div className="absolute inset-0" style={{ background: '#00000099' }} />
 
           {/* back button — same as SenseDetail: desktop/tablet only */}

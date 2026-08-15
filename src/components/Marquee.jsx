@@ -30,7 +30,7 @@ export default function Marquee() {
   const messages = [
     { key: 'launch', segments: [{ text: 'LAUNCHING 05 OCT 2026', color: WHITE }] },
     { key: 'konnect', segments: [{ text: 'KONNECT', color: YELLOW }] },
-    { key: 'vault', segments: [{ text: 'VAULT', color: WHITE }] },
+    { key: 'vault', segments: [{ text: 'VAULT', color: GREEN }] },
     { key: 'more', segments: [{ text: 'AND MUCH MORE', color: WHITE }] },
     { key: 'aec', segments: [{ text: 'AEC + RE', color: WHITE }] },
     {
