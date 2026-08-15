@@ -256,7 +256,7 @@ export default function SenseGallery({
               title/description below the mark on mobile */}
           <div
             key={expanding.key}
-            className="relative flex flex-1 flex-col items-center justify-center gap-6 px-6 transition-[opacity,transform] duration-700 sm:flex-row sm:justify-center sm:gap-0"
+            className="relative flex flex-1 flex-col items-center justify-center gap-3 px-6 py-4 transition-[opacity,transform] duration-700 sm:flex-row sm:justify-center sm:gap-0 sm:py-0"
             style={{
               opacity: expanding.active ? 1 : 0,
               transform: expanding.active ? 'translateY(0)' : 'translateY(16px)',
@@ -280,7 +280,7 @@ export default function SenseGallery({
             </div>
 
             {/* accent ring + recolored mark */}
-            <div className="relative flex h-[220px] w-[220px] shrink-0 items-center justify-center sm:h-[380px] sm:w-[380px]">
+            <div className="relative flex h-[clamp(180px,34vh,280px)] w-[clamp(180px,34vh,280px)] shrink-0 items-center justify-center sm:h-[380px] sm:w-[380px]">
               <img
                 key={`mark-${expanding.key}`}
                 src={expanding.sense.centerImage}

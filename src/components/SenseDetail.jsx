@@ -93,7 +93,7 @@ export default function SenseDetail({
             before the peek bar, which is where it's expected to be.
             Side-by-side + vertically centered with the absolute left/right
             text on sm+, unchanged. */}
-        <div className="animate-detail-content-in relative flex min-h-0 flex-1 flex-col items-center justify-center gap-4 px-5 py-6 sm:flex-row sm:justify-center sm:gap-0 sm:px-6 sm:py-16">
+        <div className="animate-detail-content-in relative flex min-h-0 flex-1 flex-col items-center justify-center gap-3 px-5 py-4 sm:flex-row sm:justify-center sm:gap-0 sm:px-6 sm:py-16">
           {/* left label — desktop/tablet only */}
           <div className="absolute left-6 top-1/2 hidden -translate-y-1/2 text-left sm:block sm:left-14 md:left-24">
             <h1
@@ -111,7 +111,7 @@ export default function SenseDetail({
           </div>
 
           {/* center mark */}
-          <div className="relative flex h-[180px] w-[180px] shrink-0 items-center justify-center sm:h-[380px] sm:w-[380px]">
+          <div className="relative flex h-[clamp(180px,34vh,280px)] w-[clamp(180px,34vh,280px)] shrink-0 items-center justify-center sm:h-[380px] sm:w-[380px]">
             <img
               key={`mark-${sense.key}`}
               src={sense.centerImage}

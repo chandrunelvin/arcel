@@ -42,9 +42,9 @@ const BLANK = FONT[' ']
 
 // One character rendered as a 5x7 grid of dots, sized in `em` so the whole
 // thing scales with font-size on an ancestor — no separate breakpoint
-// tuning needed. Colors match the reference LED artwork: bright green lit
-// dots on dark-blue unlit dots.
-function DotGlyph({ char }) {
+// tuning needed. Unlit dots always stay the sign's dark-blue background;
+// `color` sets the lit dots, so each glyph/message can be its own color.
+function DotGlyph({ char, color }) {
   const glyph = FONT[char.toUpperCase()] || BLANK
   return (
     <span
@@ -62,7 +62,7 @@ function DotGlyph({ char }) {
           <span
             key={`${r}-${c}`}
             className="rounded-[1px]"
-            style={{ background: cell === '#' ? '#27FB00' : '#0E10C7' }}
+            style={{ background: cell === '#' ? color : '#0E10C7' }}
           />
         ))
       )}
@@ -72,11 +72,11 @@ function DotGlyph({ char }) {
 
 // A string rendered entirely as dot-matrix glyphs — drop-in replacement
 // for a plain <span>text</span> wherever the LED sign look is wanted.
-export default function DotMatrixText({ text, className = '', ...rest }) {
+export default function DotMatrixText({ text, color = '#27FB00', className = '', ...rest }) {
   return (
     <span className={`inline-flex items-end gap-[0.16em] ${className}`} {...rest}>
       {[...text].map((ch, i) => (
-        <DotGlyph key={i} char={ch} />
+        <DotGlyph key={i} char={ch} color={color} />
       ))}
     </span>
   )

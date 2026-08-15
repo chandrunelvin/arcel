@@ -11,36 +11,56 @@ function useDaysToGo() {
   }, [])
 }
 
+const WHITE = '#FFFFFF'
+const YELLOW = '#FFC639'
+const GREEN = '#27FB00'
+
 // LED-style ticker — real text (not a baked image) so the rotating set of
 // messages, including the live day countdown, can actually change. Two
 // identical copies of the message list sit side by side in a `w-max` flex
 // row that translates by exactly -50%, so the loop point is seamless
 // regardless of how long the messages end up being. Each message is its
 // own element with a fixed right margin for spacing, rather than a joined
-// string with a separator character between words.
+// string with a separator character between words. Each message can be
+// made of multiple colored segments — the day countdown is the number in
+// green followed by "MORE DAYS TO GO" in white.
 export default function Marquee() {
   const daysToGo = useDaysToGo()
 
   const messages = [
-    'LAUNCHING 05 OCT 2026',
-    'KONNECT',
-    'VAULT',
-    'AND MUCH MORE',
-    'AEC + RE',
-    `${daysToGo} MORE DAYS TO GO`,
-    'GLOBAL YET LOCAL',
+    { key: 'launch', segments: [{ text: 'LAUNCHING 05 OCT 2026', color: WHITE }] },
+    { key: 'konnect', segments: [{ text: 'KONNECT', color: YELLOW }] },
+    { key: 'vault', segments: [{ text: 'VAULT', color: WHITE }] },
+    { key: 'more', segments: [{ text: 'AND MUCH MORE', color: WHITE }] },
+    { key: 'aec', segments: [{ text: 'AEC + RE', color: WHITE }] },
+    {
+      key: 'days',
+      segments: [
+        { text: `${daysToGo}`, color: GREEN },
+        { text: ' MORE DAYS TO GO', color: WHITE },
+      ],
+    },
+    { key: 'global', segments: [{ text: 'GLOBAL YET LOCAL', color: WHITE }] },
   ]
 
   const renderMessages = (hidden) =>
-    messages.map((message, i) => (
-      <DotMatrixText key={i} text={message} className="mr-12" aria-hidden={hidden || undefined} />
+    messages.map((message) => (
+      <span
+        key={message.key}
+        className="mr-12 inline-flex items-end"
+        aria-hidden={hidden || undefined}
+      >
+        {message.segments.map((segment, i) => (
+          <DotMatrixText key={i} text={segment.text} color={segment.color} />
+        ))}
+      </span>
     ))
 
   return (
     <div className="relative h-6 w-full overflow-hidden sm:h-8">
       <div
         role="img"
-        aria-label={messages.join(', ')}
+        aria-label={messages.map((m) => m.segments.map((s) => s.text).join('')).join(', ')}
         className="animate-marquee-text flex h-full w-max items-center whitespace-nowrap text-2xl sm:text-[32px]"
       >
         {renderMessages(false)}
