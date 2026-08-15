@@ -94,12 +94,12 @@ export default function SenseDetail({ open, activeKey, onSelect, onBack, onClose
           {/* accent ring + recolored mark */}
           <div className="relative flex h-[220px] w-[220px] shrink-0 items-center justify-center sm:h-[380px] sm:w-[380px]">
             <div
-              key={sense.key}
+              key={`ring-${sense.key}`}
               className="animate-spin-once absolute inset-0 rounded-full border"
               style={{ borderColor: sense.accent }}
             />
             <img
-              key={sense.key}
+              key={`mark-${sense.key}`}
               src={sense.centerImage}
               alt={`${sense.element} — ${sense.title}`}
               className="animate-spin-once relative w-[65%]"

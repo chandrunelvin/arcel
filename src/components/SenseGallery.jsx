@@ -217,16 +217,14 @@ export default function SenseGallery({ open, onClose, onSelect, activeKey }) {
             if (expanding.closing) setExpanding(null)
           }}
         >
+          {/* photo is visible immediately (not fade-delayed) so it grows
+              in step with the box itself — only the text/mark below fade
+              in afterwards, once the box has finished growing */}
           <div
-            className="pointer-events-none absolute inset-0 transition-opacity duration-300"
-            style={{ opacity: expanding.active ? 1 : 0, transitionDelay: expanding.active ? '250ms' : '0ms' }}
-          >
-            <div
-              className="absolute inset-0 bg-cover bg-center"
-              style={{ backgroundImage: `url(${expanding.sense.bg})` }}
-            />
-            <div className="absolute inset-0" style={{ background: '#00000099' }} />
-          </div>
+            className="absolute inset-0 bg-cover bg-center"
+            style={{ backgroundImage: `url(${expanding.sense.bg})` }}
+          />
+          <div className="absolute inset-0" style={{ background: '#00000099' }} />
 
           {/* back button — same as SenseDetail: desktop/tablet only */}
           <button
@@ -275,13 +273,13 @@ export default function SenseGallery({ open, onClose, onSelect, activeKey }) {
             <div className="relative flex h-[220px] w-[220px] shrink-0 items-center justify-center sm:h-[380px] sm:w-[380px]">
               {expanding.active && (
                 <div
-                  key={expanding.key}
+                  key={`ring-${expanding.key}`}
                   className="animate-spin-once absolute inset-0 rounded-full border"
                   style={{ borderColor: expanding.sense.accent }}
                 />
               )}
               <img
-                key={expanding.key}
+                key={`mark-${expanding.key}`}
                 src={expanding.sense.centerImage}
                 alt={`${expanding.sense.element} — ${expanding.sense.title}`}
                 className={expanding.active ? 'animate-spin-once relative w-[65%]' : 'relative w-[65%]'}
